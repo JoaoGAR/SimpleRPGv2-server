@@ -17,4 +17,15 @@ router.get('/get', authMiddleware, async (req, res) => {
     }
 });
 
+router.get('/getById', authMiddleware, async (req, res) => {
+    try {
+        const { structureId } = req.query;
+        let structure = await Structure.findOne({where: {id: structureId}});
+        res.send(structure);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Erro no servidor');
+    }
+});
+
 module.exports = router;

@@ -34,7 +34,14 @@ const Structure = sequelize.define('Structure', {
     icon: {
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: '0000x0000',
+    },
+    image: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    heraldry: {
+        type: DataTypes.STRING,
+        allowNull: false,
     },
 }, {
     timestamps: true,
