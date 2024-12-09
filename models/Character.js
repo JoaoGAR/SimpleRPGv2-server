@@ -25,7 +25,7 @@ class Character extends Model {
         });
         Character.hasMany(models.CharacterSkill, {
             foreignKey: 'characterId',
-            as: 'skill',
+            as: 'skills',
         });
         Character.hasMany(models.Inventory, {
             foreignKey: 'characterId',
@@ -128,6 +128,11 @@ Character.init({
         defaultValue: 100,
     },
     armorClass: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    },
+    isNPC: {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0,

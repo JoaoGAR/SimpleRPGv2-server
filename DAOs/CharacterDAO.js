@@ -37,23 +37,21 @@ async function getCharacterByUser(userId = null, characterId = null) {
                 as: 'inventory',
                 required: false,
                 where: { equiped: 1 },
-                include: [
-                    {
-                        model: Item, as: 'item',
-                        include: [
-                            { model: Tier, as: 'tier' },
-                            { model: Category, as: 'category' },
-                            {
-                                model: ItemSkill, as: 'skills',
-                                include: [{ model: Skill, as: 'skill' }]
-                            },
-                            {
-                                model: WeaponAbility, as: 'abilities',
-                                include: [{ model: Ability, as: 'ability', include: [{ model: Tier, as: 'tier' }] }]
-                            },
-                        ]
-                    }
-                ],
+                include: [{
+                    model: Item, as: 'item',
+                    include: [
+                        { model: Tier, as: 'tier' },
+                        { model: Category, as: 'category' },
+                        {
+                            model: ItemSkill, as: 'skills',
+                            include: [{ model: Skill, as: 'skill' }]
+                        },
+                        {
+                            model: WeaponAbility, as: 'abilities',
+                            include: [{ model: Ability, as: 'ability', include: [{ model: Tier, as: 'tier' }] }]
+                        },
+                    ]
+                }],
                 order: [[{ model: CharacterSkill, as: 'skill' }, 'level', 'DESC']],
             },
         ]

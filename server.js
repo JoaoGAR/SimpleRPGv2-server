@@ -13,11 +13,13 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/api/auth', require('./routes/auth'));
+
 app.use('/api/character', require('./routes/character'));
 app.use('/api/character/getInfo', require('./routes/character'));
 
 app.use('/api/structure', require('./routes/structure'));
 app.use('/api/structure/getById', require('./routes/structure'));
+app.use('/api/structure/getNPCsByLocation', require('./routes/structure'));
 
 app.use('/api/job', require('./routes/job'));
 app.use('/api/job/startWork', require('./routes/job'));

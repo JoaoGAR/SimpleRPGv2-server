@@ -23,6 +23,10 @@ class Item extends Model {
             foreignKey: 'itemId',
             as: 'abilities',
         });
+        Item.belongsTo(models.Skill, {
+            foreignKey: 'skillId',
+            as: 'modifier',
+        });
     }
 }
 
@@ -81,6 +85,15 @@ Item.init({
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0,
+    },
+    skillId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+        references: {
+            model: 'Skills',
+            key: 'id',
+        },
     },
 }, {
     sequelize,
