@@ -24,7 +24,7 @@ async function getNPCsByLocation(structureId, locationId) {
             include: [
                 { model: Class, as: 'class' },
                 { model: CharacterAttribute, as: 'attributes', include: [{ model: Attribute, as: 'attributes' }] },
-                { model: CharacterSkill, as: 'skill', include: [{ model: Skill, as: 'skill' }] },
+                { model: CharacterSkill, as: 'skills', include: [{ model: Skill, as: 'skill' }] },
                 {
                     model: Inventory,
                     as: 'inventory',

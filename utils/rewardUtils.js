@@ -1,7 +1,7 @@
 const rewardCalculator = (character, queue) => {
 
     const requirements = queue.job.requirements;
-    const characterSkills = character.skill;
+    const characterSkills = character.skills;
     const job = queue.job;
 
     const totalSkillLevel = requirements.reduce((total, requirement) => {

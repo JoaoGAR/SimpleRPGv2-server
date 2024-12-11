@@ -49,7 +49,7 @@ async function getJobs(req, res) {
 
         const availableJobs = jobs.filter(job =>
             job.requirements.every(requirement => {
-                const characterSkill = character.skill.find(cs => cs.skillId === requirement.skillId);
+                const characterSkill = character.skills.find(cs => cs.skillId === requirement.skillId);
                 return characterSkill && (characterSkill.level + 2 >= requirement.skillLevel);
             })
         );

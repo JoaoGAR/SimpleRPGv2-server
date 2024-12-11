@@ -10,7 +10,7 @@ const equipmentBonus = (character, equipment) => {
         });
     });
 
-    character.skill.forEach(characterSkill => {
+    character.skills.forEach(characterSkill => {
         if (equipmentSkillLevels[characterSkill.skillId]) {
             characterSkill.level += equipmentSkillLevels[characterSkill.skillId];
         }

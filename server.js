@@ -34,6 +34,8 @@ app.use('/api/inventory/equip/item', require('./routes/inventory'));
 app.use('/api/skill', require('./routes/skill'));
 app.use('/api/skill/save', require('./routes/skill'));
 
+app.use('/api/battle', require('./routes/battle'));
+
 app.get('/', (req, res) => {
     res.send('API de Autenticação');
 });

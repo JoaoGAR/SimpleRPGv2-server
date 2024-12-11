@@ -78,6 +78,7 @@ async function createItemSkills(item, attributeId) {
 
     let listItemSkills = [];
     const quantity = item.tierId > 5 ? 4 : item.tierId;
+    /*
     const skills = await Skill.findAll({
         where: {
             'attributeId': attributeId,
@@ -85,8 +86,18 @@ async function createItemSkills(item, attributeId) {
         order: [Sequelize.literal('RAND()')],
         limit: quantity,
     });
+    */
+    const skills = await Skill.findAll({
+        where: { attributeId },
+        attributes: ['id'],
+    });
 
-    for (const skill of skills) {
+    const randomSkills = skills
+        .map(skill => skill.id)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, quantity);
+
+    for (const skill of randomSkills) {
         const skillLevel = item.tierId > 4 ? (Math.floor(Math.random() * 5) + 1) : (Math.floor(Math.random() * 2) + 1);
         let objSkill = {
             'itemId': item.id,
