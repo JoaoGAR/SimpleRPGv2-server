@@ -23,7 +23,7 @@ const Character = require('../models/Character');
 const WorkQueue = require('../models/WorkQueue');
 
 Requirement.associate({ Skill });
-Reward.associate({ BaseItem });
+Reward.associate({ Job, BaseItem });
 Job.associate({ Attribute, Requirement, Reward, JobLocation });
 JobLocation.associate({ Job });
 WorkQueue.associate({ Job, Character });
@@ -38,20 +38,20 @@ async function getJobs(req, res) {
             include: [{
                 model: Job, as: 'job', include: [
                     { model: Attribute, as: 'attribute' },
+                    { model: Reward, as: 'rewards', include: [{ model: BaseItem, as: 'item' }] },
                     {
                         model: Requirement, as: 'requirements',
                         include: [{ model: Skill, as: 'skill', include: [{ model: Attribute, as: 'attribute' }] }]
                     },
-                    { model: Reward, as: 'rewards', include: [{ model: BaseItem, as: 'item' }] }
                 ]
             }],
-            order: [[{ model: Reward, as: 'rewards' }, 'baseItemId', 'ASC']],
+            order: [[{ model: Job, as: 'job' }, { model: Reward, as: 'rewards' }, 'baseItemId', 'ASC']],
         });
 
         character = equipmentBonus(character, equipment);
 
-        const availableJobs = jobs.filter(job =>
-            job.requirements.every(requirement => {
+        const availableJobs = jobsLocations.filter(jobLocation =>
+            jobLocation.job.requirements.every(requirement => {
                 const characterSkill = character.skills.find(cs => cs.skillId === requirement.skillId);
                 return characterSkill && (characterSkill.level + 2 >= requirement.skillLevel);
             })

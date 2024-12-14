@@ -11,6 +11,7 @@ class Job extends Model {
             as: 'requirements',
         });
         Job.hasMany(models.Reward, {
+            foreignKey: 'jobId',
             as: 'rewards',
         });
         Job.hasMany(models.JobLocation, {

@@ -3,6 +3,10 @@ const { sequelize } = require('../config/db');
 
 class Reward extends Model {
     static associate(models) {
+        Reward.belongsTo(models.Job, {
+            foreignKey: 'jobId',
+            as: 'job',
+        });
         Reward.belongsTo(models.BaseItem, {
             foreignKey: 'baseItemId',
             as: 'item',
@@ -25,6 +29,14 @@ Reward.init({
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 1,
+    },
+    jobId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'Jobs',
+            key: 'id',
+        },
     },
     baseItemId: {
         type: DataTypes.INTEGER,
