@@ -25,7 +25,7 @@ async function getCharacterByUser(userId = null, characterId = null) {
 
     const key = characterId !== null ? { 'id': characterId } : { 'userId': userId };
 
-    const character = await Character.findOne({
+    let character = await Character.findOne({
         where: key,
         include: [
             { model: Race, as: 'race' },
@@ -52,7 +52,7 @@ async function getCharacterByUser(userId = null, characterId = null) {
                         },
                     ]
                 }],
-                order: [[{ model: CharacterSkill, as: 'skill' }, 'level', 'DESC']],
+                order: [[{ model: CharacterSkill, as: 'skills' }, 'level', 'DESC']],
             },
         ]
     });

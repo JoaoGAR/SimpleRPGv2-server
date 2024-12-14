@@ -43,6 +43,11 @@ const Structure = sequelize.define('Structure', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    type: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+    },
 }, {
     timestamps: true,
 });

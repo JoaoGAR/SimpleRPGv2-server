@@ -10,6 +10,7 @@ const { calculateDuration } = require('../utils/timeUtils');
 const { generateItem } = require('../controllers/itemController');
 const { getCharacterByUser } = require('../DAOs/CharacterDAO');
 
+const JobLocation = require('../models/JobLocation');
 const CharacterSkill = require('../models/CharacterSkill');
 const Attribute = require('../models/Attribute');
 const Inventory = require('../models/Inventory');
@@ -23,7 +24,8 @@ const WorkQueue = require('../models/WorkQueue');
 
 Requirement.associate({ Skill });
 Reward.associate({ BaseItem });
-Job.associate({ Attribute, Requirement, Reward });
+Job.associate({ Attribute, Requirement, Reward, JobLocation });
+JobLocation.associate({ Job });
 WorkQueue.associate({ Job, Character });
 
 async function getJobs(req, res) {
@@ -32,16 +34,17 @@ async function getJobs(req, res) {
         let character = await getCharacterByUser(userId);
         const equipment = character.inventory;
 
-        const jobs = await Job.findAll({
-            where: { id: { [Op.ne]: 1 } },
-            include: [
-                { model: Attribute, as: 'attribute' },
-                {
-                    model: Requirement, as: 'requirements',
-                    include: [{ model: Skill, as: 'skill', include: [{ model: Attribute, as: 'attribute' }] }]
-                },
-                { model: Reward, as: 'rewards', include: [{ model: BaseItem, as: 'item' }] },
-            ],
+        const jobsLocations = await JobLocation.findAll({
+            include: [{
+                model: Job, as: 'job', include: [
+                    { model: Attribute, as: 'attribute' },
+                    {
+                        model: Requirement, as: 'requirements',
+                        include: [{ model: Skill, as: 'skill', include: [{ model: Attribute, as: 'attribute' }] }]
+                    },
+                    { model: Reward, as: 'rewards', include: [{ model: BaseItem, as: 'item' }] }
+                ]
+            }],
             order: [[{ model: Reward, as: 'rewards' }, 'baseItemId', 'ASC']],
         });
 
@@ -113,7 +116,7 @@ async function finishWork(req, res) {
     const userId = req.user.id;
 
     try {
-        let character = await Character.findOne({ where: { userId }, include: [{ model: CharacterSkill, as: 'skill' }] });
+        let character = await Character.findOne({ where: { userId }, include: [{ model: CharacterSkill, as: 'skills' }] });
 
         const queue = await WorkQueue.findOne({
             where: { id: queueId, characterId: character.id, jobStatus: 2 },
@@ -170,7 +173,7 @@ async function finishWork(req, res) {
             travellingId = travelling.id;
         };
 
-        //await queue.destroy();
+        await queue.destroy();
         character = await getCharacterByUser(userId);
         res.send({ jobResult, 'status': 200, 'message': getResponseMessage('workCompleted'), 'travellingId': travellingId, 'character': character });
 

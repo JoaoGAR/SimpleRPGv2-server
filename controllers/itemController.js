@@ -20,6 +20,8 @@ async function generateItem(baseItem) {
         let attack = null;
         let armorClass = baseItem.armorClass > 0 && tierId > 4 ? (baseItem.armorClass + 2) : baseItem.armorClass;
 
+        const skillId = { 1: 1, 2: 3, 3: 5 };
+
         if (baseItem.categoryId == 7) {
             let minAttack = baseItem.minAttack;
             let maxAttack = baseItem.maxAttack;
@@ -38,11 +40,12 @@ async function generateItem(baseItem) {
             'tierId': tierId,
             'attack': attack,
             'armorClass': armorClass,
+            'skillId': skillId[attributeId],
         };
 
         item = await Item.create(item);
         if (item.categoryId === 7) {
-            const abilities = await createItemAbilities(item, attributeId);
+            const abilities = await createItemAbilities(item, skillId[attributeId]);
         } else {
             const skills = await createItemSkills(item, attributeId);
         }
@@ -96,12 +99,11 @@ async function createItemSkills(item, attributeId) {
         .map(skill => skill.id)
         .sort(() => Math.random() - 0.5)
         .slice(0, quantity);
-
-    for (const skill of randomSkills) {
+        for (const skillId of randomSkills) {
         const skillLevel = item.tierId > 4 ? (Math.floor(Math.random() * 5) + 1) : (Math.floor(Math.random() * 2) + 1);
         let objSkill = {
             'itemId': item.id,
-            'skillId': skill.id,
+            'skillId': skillId,
             'level': skillLevel,
         };
         listItemSkills.push(objSkill);
@@ -112,17 +114,10 @@ async function createItemSkills(item, attributeId) {
 
 }
 
-async function createItemAbilities(item, attributeId) {
+async function createItemAbilities(item, itemSkillId) {
 
-    const config = {
-        1: { skillId: 1, offensive: 1, defensive: 2 },
-        2: { skillId: 3, offensive: 3, defensive: 0 },
-        3: { skillId: 5, offensive: 2, defensive: 1 },
-    };
-    const { skillId, offensive: offensiveQty, defensive: defensiveQty } = config[attributeId] || { skillId: 1, offensive: 2, defensive: 1 };
-    const offensiveAbilities = await fetchAbilities(skillId, 1, offensiveQty, item.id);
-    const defensiveAbilities = await fetchAbilities(skillId, 2, defensiveQty, item.id);
-    const itemAbilities = await WeaponAbility.bulkCreate([...offensiveAbilities, ...defensiveAbilities]);
+    const offensiveAbilities = await fetchAbilities(itemSkillId, 1, 1, item.id);
+    const itemAbilities = await WeaponAbility.bulkCreate([...offensiveAbilities]);
     return itemAbilities;
 
 }

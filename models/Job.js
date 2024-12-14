@@ -13,6 +13,10 @@ class Job extends Model {
         Job.hasMany(models.Reward, {
             as: 'rewards',
         });
+        Job.hasMany(models.JobLocation, {
+            foreignKey: 'jobId',
+            as: 'locations',
+        });
     }
 }
 
@@ -30,16 +34,6 @@ Job.init({
                 msg: 'Nome obrigatório.',
             },
         },
-    },
-    coordsx: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: '500',
-    },
-    coordsy: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: '600',
     },
     description: {
         type: DataTypes.TEXT,
