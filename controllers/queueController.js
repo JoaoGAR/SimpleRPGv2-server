@@ -5,6 +5,7 @@ const Character = require('../models/Character');
 const WorkQueue = require('../models/WorkQueue');
 const Job = require('../models/Job');
 const Attribute = require('../models/Attribute');
+const BaseItem = require('../models/BaseItem');
 
 async function getQueue(req, res) {
     try {
@@ -21,13 +22,13 @@ async function getQueue(req, res) {
                 {
                     model: Job, as: 'job',
                     include: [
-                        { model: Reward, as: 'rewards' },
+                        { model: Reward, as: 'rewards', include: [{ model: BaseItem, as: 'item' }] },
                         { model: Attribute, as: 'attribute' },
                     ]
                 }
             ],
         });
-        queue.forEach(function callback(value, index) {
+        queue.forEach(async function callback(value, index) {
             if (queue[index - 1]) {
                 if (queue[index - 1].jobStatus == 2) {
                     value.jobStatus = 1;
@@ -38,10 +39,18 @@ async function getQueue(req, res) {
             if (value.endAt <= now) {
                 value.jobStatus = 2;
             }
-            WorkQueue.update(
+            await WorkQueue.update(
                 { jobStatus: value.jobStatus },
                 { where: { id: value.id } },
             );
+
+            if (value.jobStatus === 2 && value.jobId === 1) {
+                await WorkQueue.update(
+                    { jobStatus: value.jobStatus },
+                    { where: { id: value.id } },
+                );
+            }
+
         });
         res.send(queue);
     } catch (error) {

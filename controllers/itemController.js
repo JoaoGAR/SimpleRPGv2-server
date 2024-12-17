@@ -17,29 +17,18 @@ async function generateItem(baseItem) {
 
         const tierId = await getRandomTier();
         const attributeId = baseItem.attributeId;
-        let attack = null;
-        let armorClass = baseItem.armorClass > 0 && tierId > 4 ? (baseItem.armorClass + 2) : baseItem.armorClass;
-
         const skillId = { 1: 1, 2: 3, 3: 5 };
-
-        if (baseItem.categoryId == 7) {
-            let minAttack = baseItem.minAttack;
-            let maxAttack = baseItem.maxAttack;
-            maxAttack = tierId < 4 ? Math.round((maxAttack / 2)) : maxAttack;
-            minAttack = tierId < 4 ? minAttack : (minAttack + 2);
-            attack = await getRandomAttack(minAttack, maxAttack);
-            attack = '1d' + attack;
-        }
+        const base = await generateBase(baseItem, tierId);
 
         let item = {
-            'name': baseItem.name,
+            'name': base.name,
             'description': baseItem.description,
             'icon': baseItem.icon,
-            'image': baseItem.image,
+            'image': base.image,
             'categoryId': baseItem.categoryId,
             'tierId': tierId,
-            'attack': attack,
-            'armorClass': armorClass,
+            'attack': base.attack,
+            'armorClass': base.armorClass,
             'skillId': skillId[attributeId],
         };
 
@@ -80,18 +69,10 @@ async function getRandomAttack(minAttack, maxAttack) {
 async function createItemSkills(item, attributeId) {
 
     let listItemSkills = [];
-    const quantity = item.tierId > 5 ? 4 : item.tierId;
-    /*
+    const quantity = item.tierId >= 5 ? 4 : item.tierId;
+
     const skills = await Skill.findAll({
-        where: {
-            'attributeId': attributeId,
-        },
-        order: [Sequelize.literal('RAND()')],
-        limit: quantity,
-    });
-    */
-    const skills = await Skill.findAll({
-        where: { attributeId },
+        //where: { attributeId },
         attributes: ['id'],
     });
 
@@ -99,8 +80,8 @@ async function createItemSkills(item, attributeId) {
         .map(skill => skill.id)
         .sort(() => Math.random() - 0.5)
         .slice(0, quantity);
-        for (const skillId of randomSkills) {
-        const skillLevel = item.tierId > 4 ? (Math.floor(Math.random() * 5) + 1) : (Math.floor(Math.random() * 2) + 1);
+    for (const skillId of randomSkills) {
+        const skillLevel = item.tierId >= 5 ? (Math.floor(Math.random() * 5) + 1) : (Math.floor(Math.random() * 2) + 1);
         let objSkill = {
             'itemId': item.id,
             'skillId': skillId,
@@ -140,6 +121,55 @@ async function fetchAbilities(skillId, typeId, quantity, itemId) {
         });
     }
     return listAbilities;
+}
+
+async function generateBase(baseItem, tierId) {
+    const bases = ['t0', 't1', 't2', 't3', 't4'];
+    let attack = null;
+    let baseTier = 't0';
+    let base = {
+        'armorClass': baseItem.armorClass,
+        'image': baseItem.image,
+        'name': baseItem.name,
+        'attack': baseItem.minAttack,
+    };
+
+    let baseWeights;
+    if (tierId <= 4) {
+        baseWeights = [50, 30, 15, 5, 0];
+    } else {
+        baseWeights = [0, 10, 20, 35, 30];
+    }
+
+    const totalWeight = baseWeights.reduce((a, b) => a + b, 0);
+    const random = Math.random() * totalWeight;
+
+    let accumulatedWeight = 0;
+    for (let i = 0; i < bases.length; i++) {
+        accumulatedWeight += baseWeights[i];
+        if (random <= accumulatedWeight) {
+            baseTier = bases[i];
+            break;
+        }
+    }
+
+    if (baseItem.categoryId == 7) {
+        let minAttack = baseItem.minAttack;
+        let maxAttack = baseItem.maxAttack;
+        maxAttack = tierId < 4 ? Math.round((maxAttack / 2)) : maxAttack;
+        minAttack = tierId < 4 ? minAttack : (minAttack + 2);
+        attack = await getRandomAttack(minAttack, maxAttack);
+        attack = '1d' + (attack + bases.indexOf(baseTier));
+    } else {
+        base.armorClass = baseItem.armorClass + bases.indexOf(baseTier);
+        base.armorClass = tierId > 4 ? (base.armorClass + 2) : base.armorClass;
+    }
+
+    base.image = `${baseItem.image + baseTier}.png`;
+    base.name = `${base.name + ` - ` + baseTier}`;
+    base.attack = attack;
+
+    return base;
 }
 
 module.exports = { generateItem };

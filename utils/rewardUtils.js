@@ -15,7 +15,7 @@ const rewardCalculator = (character, queue) => {
     const rewards = [];
     const filledRewards = [];
     let status = 200;
-    let message = 'Trabalho concluído.';
+    let message = 'Trabalho exemplar.';
     const d20 = (Math.floor(Math.random() * 20) + 1);
     const calcd20 = (d20 - skillPenalty) + totalSkillLevel;
     let rewardQtd = (Math.floor(Math.random() * (job.rewards.length)) + 1);
@@ -23,7 +23,7 @@ const rewardCalculator = (character, queue) => {
     let experience = 0;
 
     if (calcd20 < difficulty) {
-        message = 'Acidente de trabalho';
+        message = 'Acidente de trabalho.';
         rewardQtd -= difficulty;
         penalty = 2;
     }

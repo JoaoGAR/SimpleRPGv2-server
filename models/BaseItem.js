@@ -67,6 +67,11 @@ BaseItem.init({
         allowNull: false,
         defaultValue: 1,
     },
+    armorType: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+    },
 }, {
     sequelize,
     modelName: 'BaseItem',

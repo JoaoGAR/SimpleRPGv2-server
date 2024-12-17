@@ -95,6 +95,10 @@ Item.init({
             key: 'id',
         },
     },
+    price: {
+        type: DataTypes.INTEGER,
+        defaultValue: null,
+    },
 }, {
     sequelize,
     modelName: 'Item',

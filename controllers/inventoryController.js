@@ -51,13 +51,19 @@ async function equipItem(req, res) {
             ],
         });
 
-        prevEquipment = prevEquipment ? prevEquipment : inventory;
+        let newArmorClass = character.armorClass;
+        //prevEquipment = prevEquipment ? prevEquipment : inventory;
 
-        await prevEquipment.update({ equiped: 0 })
+        if (prevEquipment) {
+            newArmorClass = (character.armorClass - prevEquipment.item.armorClass) + inventory.item.armorClass;
+        } else {
+            prevEquipment = inventory;
+            newArmorClass = character.armorClass + inventory.item.armorClass;
+        }
+
+        await prevEquipment.update({ equiped: 0 });
         await inventory.update({ equiped: !equiped });
-
-        await character.update({ armorClass: character.armorClass - prevEquipment.item.armorClass })
-        await character.update({ armorClass: character.armorClass + inventory.item.armorClass });
+        await character.update({ armorClass: newArmorClass });
 
         character = await getCharacterByUser(userId);
 

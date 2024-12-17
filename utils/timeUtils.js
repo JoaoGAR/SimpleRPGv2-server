@@ -1,5 +1,4 @@
 module.exports.calculateDuration = (duration) => {
-    let durationTime = 2;
     switch (duration) {
         case 0: return { finalDuration: 0, durationTime: 0.5 };
         case 1: return { finalDuration: 1, durationTime: 1 };

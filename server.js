@@ -36,6 +36,9 @@ app.use('/api/skill/save', require('./routes/skill'));
 
 app.use('/api/battle', require('./routes/battle'));
 
+app.use('/api/market', require('./routes/market'));
+app.use('/api/market/buyItem', require('./routes/market'));
+
 app.get('/', (req, res) => {
     res.send('API de Autenticação');
 });

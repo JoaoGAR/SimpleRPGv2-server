@@ -1,3 +1,5 @@
+const { Op } = require('sequelize');
+
 const Tier = require('../models/Tier');
 const ItemSkill = require('../models/ItemSkill');
 const Skill = require('../models/Skill');
@@ -33,4 +35,27 @@ async function getItem(id) {
     return item;
 }
 
-module.exports = { getItem };
+async function getItems(items) {
+    const item = await Item.findAll({
+        where: {
+            id: {
+                [Op.in]: items,
+            },
+        },
+        include: [
+            { model: Tier, as: 'tier' },
+            { model: Category, as: 'category' },
+            {
+                model: ItemSkill, as: 'skills',
+                include: [{ model: Skill, as: 'skill' }]
+            },
+            {
+                model: WeaponAbility, as: 'abilities',
+                include: [{ model: Ability, as: 'ability', include: [{ model: Tier, as: 'tier' }] }]
+            },
+        ]
+    });
+    return item;
+}
+
+module.exports = { getItem, getItems };

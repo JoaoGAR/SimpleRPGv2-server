@@ -70,7 +70,9 @@ async function startWork(req, res) {
     const now = dayjs();
 
     try {
-        const { finalDuration, durationTime } = calculateDuration(duration);
+        let { finalDuration, durationTime } = calculateDuration(duration);
+        durationTime = jobId === 1 ? 0 : durationTime;
+
         const character = await Character.findOne({ where: { userId } });
         const distance = distanceCalculator(character.coordsx, character.coordsy, coordsx, coordsy);
         const travelTime = timeCalculator(distance, character.movementSpeed) / 60;
@@ -78,21 +80,23 @@ async function startWork(req, res) {
         let endAt = now.add(durationTime + travelTime, 'hour');
         const queue = await WorkQueue.findAll({ where: { characterId: character.id, jobId: { [Op.ne]: 1 } } });
 
-        if (queue.length >= 4) return res.json({ status: 401, msg: getResponseMessage('queueFull') });
+        if (queue.length >= 4 && jobId !== 1) return res.json({ status: 401, msg: getResponseMessage('queueFull') });
 
         if (queue.length > 0 && queue[queue.length - 1].jobStatus != 2) {
             endAt = dayjs(queue[queue.length - 1].endAt).add(durationTime + travelTime, 'hour');
         }
 
         if (distance > 0) {
-            await WorkQueue.create({
-                duration: 0,
-                endAt: now.add(travelTime, 'hour'),
-                jobId: 1,
-                characterId: character.id,
-                jobStatus,
-                relatedJobId: jobId
-            });
+            if (jobId !== 1) {
+                await WorkQueue.create({
+                    duration: 0,
+                    endAt: now.add(travelTime, 'hour'),
+                    jobId: 1,
+                    characterId: character.id,
+                    jobStatus,
+                    relatedJobId: jobId
+                });
+            }
             await character.update({ coordsx, coordsy });
         }
 
