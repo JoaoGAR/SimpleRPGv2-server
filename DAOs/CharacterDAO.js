@@ -52,10 +52,11 @@ async function getCharacterByUser(userId = null, characterId = null) {
                         },
                     ]
                 }],
-                order: [[{ model: CharacterSkill, as: 'skills' }, 'level', 'DESC']],
             },
-        ]
+        ],
+        order: [[{ model: CharacterSkill, as: 'skills' }, { model: Skill, as: 'skill' }, 'attributeId', 'ASC']],
     });
+
     return character;
 }
 

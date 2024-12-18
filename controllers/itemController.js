@@ -138,7 +138,7 @@ async function generateBase(baseItem, tierId) {
     if (tierId <= 4) {
         baseWeights = [50, 30, 15, 5, 0];
     } else {
-        baseWeights = [0, 10, 20, 35, 30];
+        baseWeights = [0, 10, 30, 35, 20];
     }
 
     const totalWeight = baseWeights.reduce((a, b) => a + b, 0);

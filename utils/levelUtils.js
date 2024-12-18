@@ -1,5 +1,5 @@
 function requiredXPForNextLevel(level) {
-    return Math.floor(15 * Math.pow(level, 2));
+    return Math.floor(10 * Math.pow(level, 2));
 }
 
 const levelCalculator = (character, gainedEXP) => {

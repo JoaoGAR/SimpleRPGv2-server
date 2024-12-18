@@ -40,4 +40,31 @@ async function getInventoryByCharacter(characterId, inventoryId = null) {
     return inventory;
 }
 
-module.exports = { getInventoryByCharacter };
+async function getEquipmentByCharacterId(characterId) {
+    const equipment = await Inventory.findAll({
+        where: { characterId: characterId, equiped: 1 },
+        order: [
+            ['createdAt', 'ASC'],
+        ],
+        include: [
+            {
+                model: Item, as: 'item',
+                include: [
+                    { model: Tier, as: 'tier' },
+                    { model: Category, as: 'category' },
+                    {
+                        model: ItemSkill, as: 'skills',
+                        include: [{ model: Skill, as: 'skill' }]
+                    },
+                    {
+                        model: WeaponAbility, as: 'abilities',
+                        include: [{ model: Ability, as: 'ability', include: [{ model: Tier, as: 'tier' }] }]
+                    },
+                ]
+            }
+        ],
+    });
+    return equipment;
+}
+
+module.exports = { getInventoryByCharacter, getEquipmentByCharacterId };

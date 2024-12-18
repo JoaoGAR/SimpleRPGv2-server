@@ -50,6 +50,7 @@ Reward.init({
     sequelize,
     modelName: 'Reward',
     timestamps: true,
+    defaultScope: { order: [['baseItemId', 'ASC']] },
 });
 
 module.exports = Reward;

@@ -48,7 +48,7 @@ async function getJobs(req, res) {
             order: [[{ model: Job, as: 'job' }, { model: Reward, as: 'rewards' }, 'baseItemId', 'ASC']],
         });
 
-        character = equipmentBonus(character, equipment);
+        character = await equipmentBonus(character, equipment);
 
         const availableJobs = jobsLocations.filter(jobLocation =>
             jobLocation.job.requirements.every(requirement => {
@@ -94,10 +94,12 @@ async function startWork(req, res) {
                     jobId: 1,
                     characterId: character.id,
                     jobStatus,
-                    relatedJobId: jobId
+                    relatedJobId: jobId,
+                    coordsx: coordsx,
+                    coordsy: coordsy,
                 });
             }
-            await character.update({ coordsx, coordsy });
+            //await character.update({ coordsx, coordsy });
         }
 
         const newQueue = await WorkQueue.create({
@@ -105,7 +107,9 @@ async function startWork(req, res) {
             endAt,
             jobId,
             characterId: character.id,
-            jobStatus
+            jobStatus,
+            coordsx: coordsx,
+            coordsy: coordsy,
         });
 
         res.json({ status: 200, msg: getResponseMessage('workQueued'), queue: newQueue });
@@ -145,31 +149,7 @@ async function finishWork(req, res) {
 
         if (!queue) return res.send({ status: 401, message: getResponseMessage('queueNotFound') });
 
-        let jobResult = await rewardCalculator(character, queue);
-        const levelCalc = await levelCalculator(character, jobResult.experience);
-
-        await character.update({
-            experience: levelCalc.totalExp,
-            level: levelCalc.level,
-            gold: character.gold + jobResult.gold
-        });
-
-        if (levelCalc.levelled) {
-            await character.update({
-                classPoints: character.classPoints + levelCalc.classPoints,
-                skillPoints: character.skillPoints + levelCalc.skillPoints
-            });
-        }
-
-        const createdItems = [];
-        for (const reward of jobResult.rewards) {
-            const newItem = await generateItem(reward.item);
-            if (newItem) {
-                createdItems.push(newItem);
-                await Inventory.create({ itemId: newItem.id, characterId: character.id });
-            }
-        }
-        jobResult.rewards = createdItems;
+        jobResult = await completeJob(character, queue);
 
         let travellingId = null;
         if (travelling) {
@@ -212,6 +192,36 @@ async function dismissWork(req, res) {
         console.error(error.message);
         res.status(500).send(getResponseMessage('serverError'));
     }
+}
+
+async function completeJob(character, queue) {
+    let jobResult = await rewardCalculator(character, queue);
+    const levelCalc = await levelCalculator(character, jobResult.experience);
+
+    await character.update({
+        experience: levelCalc.totalExp,
+        level: levelCalc.level,
+        gold: character.gold + jobResult.gold
+    });
+
+    if (levelCalc.levelled) {
+        await character.update({
+            classPoints: character.classPoints + levelCalc.classPoints,
+            skillPoints: character.skillPoints + levelCalc.skillPoints
+        });
+    }
+
+    const createdItems = [];
+    for (const reward of jobResult.rewards) {
+        const newItem = await generateItem(reward.item);
+        if (newItem) {
+            createdItems.push(newItem);
+            await Inventory.create({ itemId: newItem.id, characterId: character.id });
+        }
+    }
+    jobResult.rewards = createdItems;
+
+    return jobResult;
 }
 
 module.exports = { getJobs, startWork, finishWork, dismissWork };

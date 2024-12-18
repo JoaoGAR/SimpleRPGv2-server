@@ -15,9 +15,6 @@ async function getQueue(req, res) {
         const characterId = character.id;
         let queue = await WorkQueue.findAll({
             where: { characterId },
-            order: [
-                ['createdAt', 'ASC'],
-            ],
             include: [
                 {
                     model: Job, as: 'job',
@@ -26,6 +23,9 @@ async function getQueue(req, res) {
                         { model: Attribute, as: 'attribute' },
                     ]
                 }
+            ],
+            order: [
+                ['createdAt', 'ASC'],
             ],
         });
         queue.forEach(async function callback(value, index) {
@@ -45,10 +45,17 @@ async function getQueue(req, res) {
             );
 
             if (value.jobStatus === 2 && value.jobId === 1) {
+                const coordsx = value.coordsx;
+                const coordsy = value.coordsy;
+
+                /*
                 await WorkQueue.update(
                     { jobStatus: value.jobStatus },
                     { where: { id: value.id } },
                 );
+                */
+                await character.update({ coordsx, coordsy });
+                await value.destroy();
             }
 
         });

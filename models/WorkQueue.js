@@ -55,6 +55,14 @@ WorkQueue.init({
         allowNull: true,
         defaultValue: null,
     },
+    coordsx: {
+        type: DataTypes.STRING,
+        defaultValue: null,
+    },
+    coordsy: {
+        type: DataTypes.STRING,
+        defaultValue: null,
+    },
 }, {
     sequelize,
     modelName: 'WorkQueue',
