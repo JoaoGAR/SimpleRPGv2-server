@@ -19,16 +19,30 @@ async function getQueue(req, res) {
                 {
                     model: Job, as: 'job',
                     include: [
-                        { model: Reward, as: 'rewards', include: [{ model: BaseItem, as: 'item' }] },
+                        {
+                            model: Reward,
+                            as: 'rewards',
+                            include: [{ model: BaseItem, as: 'item' }],
+                            order: [['itemId', 'ASC']],
+                        },
                         { model: Attribute, as: 'attribute' },
-                    ]
+                    ],
                 }
             ],
             order: [
-                ['createdAt', 'ASC'],
+                ['id', 'ASC'],
             ],
         });
         queue.forEach(async function callback(value, index) {
+
+            if (value.jobStatus === 2 && value.jobId === 1) {
+                const coordsx = value.coordsx;
+                const coordsy = value.coordsy;
+
+                await character.update({ coordsx, coordsy });
+                await value.destroy();
+            }
+
             if (queue[index - 1]) {
                 if (queue[index - 1].jobStatus == 2) {
                     value.jobStatus = 1;
@@ -43,20 +57,6 @@ async function getQueue(req, res) {
                 { jobStatus: value.jobStatus },
                 { where: { id: value.id } },
             );
-
-            if (value.jobStatus === 2 && value.jobId === 1) {
-                const coordsx = value.coordsx;
-                const coordsy = value.coordsy;
-
-                /*
-                await WorkQueue.update(
-                    { jobStatus: value.jobStatus },
-                    { where: { id: value.id } },
-                );
-                */
-                await character.update({ coordsx, coordsy });
-                await value.destroy();
-            }
 
         });
         res.send(queue);

@@ -1,26 +1,19 @@
-const rewardCalculator = (character, queue) => {
+const { rollDice } = require('./diceUtils');
 
-    const requirements = queue.job.requirements;
+const rewardCalculator = async (character, queue) => {
+
+    const { requirements, difficulty, rewards: jobRewards, gold: jobGold, experience: jobExperience } = queue.job;
+
     const characterSkills = character.skills;
-    const job = queue.job;
+    const totalSkillLevel = await calculateTotalSkillLevel(requirements, characterSkills);
+    const skillPenalty = await calculateSkillPenalty(requirements);
+    const d20 = await rollDice('1d20');
+    const calcd20 = d20 - skillPenalty + totalSkillLevel;
 
-    const totalSkillLevel = requirements.reduce((total, requirement) => {
-        const matchingSkills = characterSkills.filter(skill => skill.skillId === requirement.skillId);
-        const levelSum = matchingSkills.reduce((sum, skill) => sum + skill.level, 0);
-        return total + levelSum;
-    }, 0);
-
-    const skillPenalty = requirements.reduce((total, requirement) => total + requirement.skillLevel, 0);
-    const difficulty = job.difficulty;
-    const rewards = [];
-    const filledRewards = [];
-    let status = 200;
-    let message = 'Trabalho exemplar.';
-    const d20 = (Math.floor(Math.random() * 20) + 1);
-    const calcd20 = (d20 - skillPenalty) + totalSkillLevel;
-    let rewardQtd = (Math.floor(Math.random() * (job.rewards.length)) + 1);
+    let rewardQtd = await rollDice(`1d${jobRewards.length}`);
     let penalty = 1;
-    let experience = 0;
+    let message = 'Trabalho exemplar.';
+    let status = 200;
 
     if (calcd20 < difficulty) {
         message = 'Acidente de trabalho.';
@@ -28,47 +21,99 @@ const rewardCalculator = (character, queue) => {
         penalty = 2;
     }
 
-    let gold = job.gold;
-    if (gold) {
-        experience = (job.experience * (queue.duration + 1) / penalty);
-        gold = (gold / penalty) * (queue.duration + 1);
-    }
+    let gold = jobGold ? (jobGold / penalty) * (queue.duration + 1) : 0;
+    let experience = jobGold ? (jobExperience * (queue.duration + 1) / penalty) : 0;
+    rewardQtd = Math.floor(rewardQtd / penalty);
 
-    job.rewards.forEach(reward => {
+    const filledRewards = await fillRewards(jobRewards);
+    const rewards = await classifyRewards(filledRewards, rewardQtd);
+
+    return {
+        status,
+        rewards,
+        message,
+        experience,
+        d20,
+        calcd20,
+        totalSkillLevel,
+        skillPenalty,
+        difficulty,
+        rewardQtd,
+        gold,
+    };
+};
+
+const battleRewardCalculator = async (character, enemy) => {
+
+    let jobRewards = [];
+    const jobGold = enemy.gold;
+    const jobExperience = enemy.experience;
+    const isWithinRange = (character.level + 5) <= enemy.level;
+    const penalty = isWithinRange ? 1 : 2;
+
+    enemy.inventory.forEach(enemyInventory => {
+        jobRewards.push({
+            itemId: enemyInventory.itemId,
+            baseItemId: enemyInventory.item.baseItemId,
+            weight: isWithinRange ? 2 : 1,
+        });
+    });
+
+    let rewardQtd = await rollDice(`1d${jobRewards.length}`);
+    let gold = Math.floor(jobGold / penalty);
+    let experience = Math.floor(jobExperience / penalty);
+    rewardQtd = Math.floor(rewardQtd / penalty);
+
+    const filledRewards = await fillRewards(jobRewards);
+    const rewards = await classifyRewards(filledRewards, rewardQtd);
+
+    return {
+        rewards,
+        experience,
+        gold,
+    };
+}
+
+const calculateTotalSkillLevel = async (requirements, characterSkills) => {
+    return requirements.reduce((total, requirement) => {
+        const matchingSkills = characterSkills.filter(skill => skill.skillId === requirement.skillId);
+        const levelSum = matchingSkills.reduce((sum, skill) => sum + skill.level, 0);
+        return total + levelSum;
+    }, 0);
+};
+
+const calculateSkillPenalty = async (requirements) => {
+    return requirements.reduce((total, requirement) => total + requirement.skillLevel, 0);
+};
+
+const fillRewards = async (jobRewards) => {
+
+    const filledRewards = [];
+    jobRewards.forEach(reward => {
         if (reward.itemId !== 1) {
             for (let i = 0; i < reward.weight; i++) {
                 filledRewards.push(reward);
             }
         }
     });
-
     while (filledRewards.length < 10) {
         filledRewards.push({});
     }
+    return filledRewards;
+};
 
-    rewardQtd = Math.floor(rewardQtd / penalty);
+const classifyRewards = async (filledRewards, rewardQtd) => {
+
+    const rewards = [];
     for (let i = 0; i < rewardQtd; i++) {
-        let randomReward = Math.floor(Math.random() * filledRewards.length);
-        let reward = filledRewards[randomReward];
+        const randomReward = Math.floor(Math.random() * filledRewards.length);
+        const reward = filledRewards[randomReward];
         if (reward && Object.keys(reward).length > 0) {
             rewards.push(reward);
         }
     }
 
-    return {
-        'status': status,
-        'rewards': rewards,
-        'message': message,
-        'experience': experience,
-        'd20': d20,
-        'calcd20': calcd20,
-        'totalSkillLevel': totalSkillLevel,
-        'skillPenalty': skillPenalty,
-        'difficulty': difficulty,
-        'rewardQtd': rewardQtd,
-        'gold': gold,
-    };
+    return rewards;
+}
 
-};
-
-module.exports = { rewardCalculator };
+module.exports = { rewardCalculator, battleRewardCalculator };

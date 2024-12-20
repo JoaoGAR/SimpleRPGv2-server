@@ -1,8 +1,14 @@
 const { rollDice } = require('../utils/diceUtils');
+const { battleRewardCalculator } = require('../utils/rewardUtils');
 const { equipmentBonus } = require('../utils/equipmentBonus');
 const { getCharacterByUser } = require('../DAOs/CharacterDAO');
+const { levelCalculator } = require('../utils/levelUtils');
 
+const { generateItem } = require('../controllers/itemController');
+
+const BaseItem = require('../models/BaseItem');
 const Character = require('../models/Character');
+const Inventory = require('../models/Inventory');
 
 async function challengeTarget(req, res) {
     try {
@@ -14,7 +20,11 @@ async function challengeTarget(req, res) {
         attacker = await equipmentBonus(attacker, attacker.inventory);
         target = await equipmentBonus(target, target.inventory);
         let battleStatus = [];
+        let createdItems = [];
+        let battleLoot = {};
         let winner = 0;
+        let experience = 0;
+        let gold = 0;
 
         let roundNumber = 1;
         while (attacker.wellness > 0 && target.wellness > 0) {
@@ -30,7 +40,40 @@ async function challengeTarget(req, res) {
         }
         await updateCharacterWellness(attacker.id, attacker.wellness);
 
-        res.send({ battleStatus, winner });
+        if (winner) {
+
+            battleLoot = await battleRewardCalculator(attacker, target);
+            experience = battleLoot.experience;
+            gold = battleLoot.gold;
+            const levelCalc = await levelCalculator(attacker, experience);
+
+            await attacker.update({
+                experience: levelCalc.totalExp,
+                level: levelCalc.level,
+                gold: attacker.gold + gold
+            });
+
+            if (levelCalc.levelled) {
+                await attacker.update({
+                    classPoints: attacker.classPoints + levelCalc.classPoints,
+                    skillPoints: attacker.skillPoints + levelCalc.skillPoints
+                });
+            }
+
+            for (const reward of battleLoot.rewards) {
+                if (reward.baseItemId) {
+                    const baseItem = await BaseItem.findByPk(reward.baseItemId);
+                    const newItem = await generateItem(baseItem);
+                    if (newItem) {
+                        createdItems.push(newItem);
+                        await Inventory.create({ itemId: newItem.id, characterId: attacker.id });
+                    }
+                }
+            }
+
+        }
+
+        res.send({ battleStatus, winner, createdItems, experience, gold });
     } catch (error) {
         console.error(error.message);
         res.status(500).send('Erro no servidor');

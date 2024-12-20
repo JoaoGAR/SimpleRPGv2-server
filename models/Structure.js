@@ -48,6 +48,11 @@ const Structure = sequelize.define('Structure', {
         allowNull: false,
         defaultValue: 1,
     },
+    color: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: '#000',
+    },
 }, {
     timestamps: true,
 });

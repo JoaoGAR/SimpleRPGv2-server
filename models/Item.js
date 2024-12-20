@@ -77,6 +77,10 @@ Item.init({
             key: 'id',
         },
     },
+    baseItemId: {
+        type: DataTypes.INTEGER,
+        defaultValue: null,
+    },
     attack: {
         type: DataTypes.STRING,
         defaultValue: null,

@@ -7,12 +7,13 @@ const levelCalculator = (character, gainedEXP) => {
     let novoLevel = character.level;
     let classPoints = 0;
     let skillPoints = 0;
-    
+
     while (novaExperiencia >= requiredXPForNextLevel(novoLevel + 1) && novoLevel < 50) {
         novoLevel++;
         if (novoLevel > character.level) {
             if (novoLevel % 5 === 0) {
                 classPoints += 1;
+                skillPoints += 1;
             }
             skillPoints += 1;
         }

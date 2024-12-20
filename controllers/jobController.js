@@ -52,11 +52,10 @@ async function getJobs(req, res) {
 
         const availableJobs = jobsLocations.filter(jobLocation =>
             jobLocation.job.requirements.every(requirement => {
-                const characterSkill = character.skills.find(cs => cs.skillId === requirement.skillId);
-                return characterSkill && (characterSkill.level + 2 >= requirement.skillLevel);
+                const characterSkill = character.skills.find(cs => cs.skillId === requirement.skillId) || { level: 0 };
+                return (characterSkill.level + 2) >= requirement.skillLevel;
             })
         );
-
         res.send(availableJobs);
     } catch (error) {
         console.error(error.message);
@@ -70,17 +69,21 @@ async function startWork(req, res) {
     const now = dayjs();
 
     try {
-        let { finalDuration, durationTime } = calculateDuration(duration);
+        let { finalDuration, durationTime } = await calculateDuration(duration);
         durationTime = jobId === 1 ? 0 : durationTime;
+        let character = await Character.findOne({ where: { userId } });
 
-        const character = await Character.findOne({ where: { userId } });
-        const distance = distanceCalculator(character.coordsx, character.coordsy, coordsx, coordsy);
-        const travelTime = timeCalculator(distance, character.movementSpeed) / 60;
-
-        let endAt = now.add(durationTime + travelTime, 'hour');
         const queue = await WorkQueue.findAll({ where: { characterId: character.id, jobId: { [Op.ne]: 1 } } });
-
         if (queue.length >= 4 && jobId !== 1) return res.json({ status: 401, msg: getResponseMessage('queueFull') });
+
+        if (queue.length > 0) {
+            character.coordsx = queue[queue.length - 1].coordsx;
+            character.coordsy = queue[queue.length - 1].coordsy;
+        }
+
+        const distance = await distanceCalculator(character.coordsx, character.coordsy, coordsx, coordsy);
+        const travelTime = await timeCalculator(distance, character.movementSpeed) / 60;
+        let endAt = now.add(durationTime + travelTime, 'hour');
 
         if (queue.length > 0 && queue[queue.length - 1].jobStatus != 2) {
             endAt = dayjs(queue[queue.length - 1].endAt).add(durationTime + travelTime, 'hour');

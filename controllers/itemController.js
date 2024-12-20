@@ -30,6 +30,7 @@ async function generateItem(baseItem) {
             'attack': base.attack,
             'armorClass': base.armorClass,
             'skillId': skillId[attributeId],
+            'baseItemId': baseItem.id,
         };
 
         item = await Item.create(item);
@@ -72,7 +73,7 @@ async function createItemSkills(item, attributeId) {
     const quantity = item.tierId >= 5 ? 4 : item.tierId;
 
     const skills = await Skill.findAll({
-        //where: { attributeId },
+        where: { attributeId },
         attributes: ['id'],
     });
 
@@ -138,7 +139,7 @@ async function generateBase(baseItem, tierId) {
     if (tierId <= 4) {
         baseWeights = [50, 30, 15, 5, 0];
     } else {
-        baseWeights = [0, 10, 30, 35, 20];
+        baseWeights = [5, 10, 35, 25, 15];
     }
 
     const totalWeight = baseWeights.reduce((a, b) => a + b, 0);
