@@ -1,4 +1,4 @@
-const { Sequelize } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 const { getItem } = require('../DAOs/ItemDAO');
 
 const Skill = require('../models/Skill');
@@ -16,7 +16,8 @@ async function generateItem(baseItem) {
     try {
 
         const tierId = await getRandomTier();
-        const attributeId = baseItem.attributeId;
+        const attributeIds = baseItem.attributeId.split(',').map(Number);
+        const attributeId = attributeIds[Math.floor(Math.random() * attributeIds.length)];
         const skillId = { 1: 1, 2: 3, 3: 5 };
         const base = await generateBase(baseItem, tierId);
 
@@ -37,7 +38,7 @@ async function generateItem(baseItem) {
         if (item.categoryId === 7) {
             const abilities = await createItemAbilities(item, skillId[attributeId]);
         } else {
-            const skills = await createItemSkills(item, attributeId);
+            const skills = await createItemSkills(item, attributeIds);
         }
 
         item = await getItem(item.id);
@@ -67,13 +68,13 @@ async function getRandomAttack(minAttack, maxAttack) {
     return Math.floor(Math.random() * (maxAttack - minAttack + 1)) + minAttack;
 }
 
-async function createItemSkills(item, attributeId) {
+async function createItemSkills(item, attributeIds) {
 
     let listItemSkills = [];
     const quantity = item.tierId >= 5 ? 4 : item.tierId;
 
     const skills = await Skill.findAll({
-        where: { attributeId },
+        where: { attributeId: { [Op.in]: attributeIds } },
         attributes: ['id'],
     });
 
@@ -162,7 +163,7 @@ async function generateBase(baseItem, tierId) {
         attack = await getRandomAttack(minAttack, maxAttack);
         attack = '1d' + (attack + bases.indexOf(baseTier));
     } else {
-        base.armorClass = baseItem.armorClass + bases.indexOf(baseTier);
+        //base.armorClass = baseItem.armorClass + bases.indexOf(baseTier);
         base.armorClass = tierId > 4 ? (base.armorClass + 2) : base.armorClass;
     }
 

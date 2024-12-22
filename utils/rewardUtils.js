@@ -58,11 +58,10 @@ const battleRewardCalculator = async (character, enemy) => {
             weight: isWithinRange ? 2 : 1,
         });
     });
-
     let rewardQtd = await rollDice(`1d${jobRewards.length}`);
     let gold = Math.floor(jobGold / penalty);
     let experience = Math.floor(jobExperience / penalty);
-    rewardQtd = Math.floor(rewardQtd / penalty);
+    rewardQtd = jobRewards.length > 1 ? Math.floor(rewardQtd / penalty) : rewardQtd;
 
     const filledRewards = await fillRewards(jobRewards);
     const rewards = await classifyRewards(filledRewards, rewardQtd);
@@ -90,10 +89,8 @@ const fillRewards = async (jobRewards) => {
 
     const filledRewards = [];
     jobRewards.forEach(reward => {
-        if (reward.itemId !== 1) {
-            for (let i = 0; i < reward.weight; i++) {
-                filledRewards.push(reward);
-            }
+        for (let i = 0; i < reward.weight; i++) {
+            filledRewards.push(reward);
         }
     });
     while (filledRewards.length < 10) {

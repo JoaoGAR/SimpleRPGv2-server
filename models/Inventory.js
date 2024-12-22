@@ -23,7 +23,7 @@ const Inventory = sequelize.define('Inventory', {
             key: 'id',
         },
     },
-    equiped: {
+    equipped: {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0,

@@ -29,7 +29,7 @@ async function getNPCsByLocation(structureId, locationId) {
                     model: Inventory,
                     as: 'inventory',
                     required: false,
-                    where: { equiped: 1 },
+                    where: { equipped: 1 },
                     include: [
                         {
                             model: Item, as: 'item',

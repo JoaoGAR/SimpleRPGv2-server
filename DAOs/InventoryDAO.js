@@ -42,7 +42,7 @@ async function getInventoryByCharacter(characterId, inventoryId = null) {
 
 async function getEquipmentByCharacterId(characterId) {
     const equipment = await Inventory.findAll({
-        where: { characterId: characterId, equiped: 1 },
+        where: { characterId: characterId, equipped: 1 },
         order: [
             ['createdAt', 'ASC'],
         ],

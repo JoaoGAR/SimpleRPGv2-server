@@ -36,7 +36,7 @@ async function getCharacterByUser(userId = null, characterId = null) {
                 model: Inventory,
                 as: 'inventory',
                 required: false,
-                where: { equiped: 1 },
+                where: { equipped: 1 },
                 include: [{
                     model: Item, as: 'item',
                     include: [

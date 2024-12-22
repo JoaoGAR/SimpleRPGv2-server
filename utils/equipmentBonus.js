@@ -1,8 +1,8 @@
 const equipmentBonus = async (character, equipment) => {
     const equipmentSkillLevels = [];
 
-    equipment.forEach(equipedItem => {
-        equipedItem.item.skills.forEach(itemSkill => {
+    equipment.forEach(equippedItem => {
+        equippedItem.item.skills.forEach(itemSkill => {
             if (!equipmentSkillLevels[itemSkill.skillId]) {
                 equipmentSkillLevels[itemSkill.skillId] = 0;
             }

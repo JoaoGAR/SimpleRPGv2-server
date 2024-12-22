@@ -22,7 +22,7 @@ async function getInventory(req, res) {
 async function equipItem(req, res) {
     try {
         const userId = req.user.id;
-        const { inventoryId, equiped } = req.body;
+        const { inventoryId, equipped } = req.body;
 
         let character = await Character.findOne({ where: { userId } });
         const characterId = character.id;
@@ -39,7 +39,7 @@ async function equipItem(req, res) {
             where: {
                 id: { [Op.ne]: inventoryId },
                 characterId: characterId,
-                equiped: 1
+                equipped: 1
             },
             include: [
                 {
@@ -61,8 +61,8 @@ async function equipItem(req, res) {
             newArmorClass = character.armorClass + inventory.item.armorClass;
         }
 
-        await prevEquipment.update({ equiped: 0 });
-        await inventory.update({ equiped: !equiped });
+        await prevEquipment.update({ equipped: 0 });
+        await inventory.update({ equipped: !equipped });
         await character.update({ armorClass: newArmorClass });
 
         character = await getCharacterByUser(userId);

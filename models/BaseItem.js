@@ -63,9 +63,9 @@ BaseItem.init({
         defaultValue: 0,
     },
     attributeId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: 1,
+        defaultValue: '1,2',
     },
     armorType: {
         type: DataTypes.INTEGER,

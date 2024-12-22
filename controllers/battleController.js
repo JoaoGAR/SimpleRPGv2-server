@@ -116,7 +116,7 @@ async function battle(attacker, target, roundN) {
     let skillModifier = attacker.skills.find(
         (skills) => skills.skill.id == weapon.skillId
     );
-    skillModifier = skillModifier.level ? Math.floor(skillModifier.level / 2) : 0;
+    skillModifier = skillModifier.level ? Math.floor(skillModifier.level / 5) : 0;
     let attack = await rollAttack(weapon, ability, skillModifier, target);
 
     target.wellness = Math.max(target.wellness - attack.damage, 0);
