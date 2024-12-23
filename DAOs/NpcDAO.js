@@ -46,11 +46,11 @@ async function getNPCsByLocation(structureId, locationId) {
                                 },
                             ]
                         }
-                    ],
-                    order: [[{ model: Character, as: 'npc' }, 'level', 'ASC']],
+                    ]
                 },
             ]
-        },]
+        }],
+        order: [[{ model: Character, as: 'npc' }, 'level', 'ASC']],
     });
     return npcs;
 }

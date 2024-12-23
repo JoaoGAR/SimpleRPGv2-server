@@ -1,8 +1,8 @@
 const { rollDice } = require('../utils/diceUtils');
 const { battleRewardCalculator } = require('../utils/rewardUtils');
-const { equipmentBonus } = require('../utils/equipmentBonus');
-const { getCharacterByUser } = require('../DAOs/CharacterDAO');
+const { equipmentBonus, getInitiative } = require('../utils/equipmentBonus');
 const { levelCalculator } = require('../utils/levelUtils');
+const { getCharacterByUser } = require('../DAOs/CharacterDAO');
 
 const { generateItem } = require('../controllers/itemController');
 
@@ -19,29 +19,50 @@ async function challengeTarget(req, res) {
 
         attacker = await equipmentBonus(attacker, attacker.inventory);
         target = await equipmentBonus(target, target.inventory);
+
         let battleStatus = [];
         let createdItems = [];
         let battleLoot = {};
         let winner = 0;
         let experience = 0;
         let gold = 0;
-
         let roundNumber = 1;
-        while (attacker.wellness > 0 && target.wellness > 0) {
-            const roundA = await battle(attacker, target, roundNumber);
-            battleStatus.push(roundA);
-            if (target.wellness === 0) { winner = 1; break };
 
-            const roundB = await battle(target, attacker, roundNumber);
-            battleStatus.push(roundB);
-            if (attacker.wellness === 0) break;
+        let attackerInitiative = await getInitiative(attacker.inventory);
+        let targetInitiative = await getInitiative(target.inventory);
+
+        attackerInitiative += await rollDice('1d20');
+        targetInitiative += await rollDice('1d20');
+
+        let first, second;
+        if (attackerInitiative >= targetInitiative) {
+            first = attacker;
+            second = target;
+        } else {
+            first = target;
+            second = attacker;
+        }
+
+        while (attacker.wellness > 0 && target.wellness > 0) {
+            const roundFirst = await battle(first, second, roundNumber);
+            battleStatus.push(roundFirst);
+            if (second.wellness === 0) {
+                winner = first === attacker ? 1 : 0;
+                break;
+            }
+
+            const roundSecond = await battle(second, first, roundNumber);
+            battleStatus.push(roundSecond);
+            if (first.wellness === 0) {
+                winner = first === attacker ? 1 : 0;
+                break;
+            }
 
             roundNumber++;
         }
         await updateCharacterWellness(attacker.id, attacker.wellness);
 
         if (winner) {
-
             battleLoot = await battleRewardCalculator(attacker, target);
             experience = battleLoot.experience;
             gold = battleLoot.gold;
@@ -70,10 +91,9 @@ async function challengeTarget(req, res) {
                     }
                 }
             }
-
         }
-
-        res.send({ battleStatus, winner, createdItems, experience, gold });
+        let character = await getCharacterByUser(userId, null);
+        res.send({ battleStatus, winner, createdItems, experience, gold, character, attackerInitiative, targetInitiative });
     } catch (error) {
         console.error(error.message);
         res.status(500).send('Erro no servidor');

@@ -19,4 +19,15 @@ const equipmentBonus = async (character, equipment) => {
     return character;
 }
 
-module.exports = { equipmentBonus };
+const getInitiative = (equipment) => {
+    if (!Array.isArray(equipment) || equipment.length === 0) {
+        return 0;
+    }
+
+    return equipment.reduce((minInitiative, currentItem) => {
+        const currentInitiative = currentItem.item.initiative || 0;
+        return currentInitiative < minInitiative ? currentInitiative : minInitiative;
+    }, Infinity);
+};
+
+module.exports = { equipmentBonus, getInitiative };

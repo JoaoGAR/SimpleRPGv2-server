@@ -99,9 +99,14 @@ Item.init({
             key: 'id',
         },
     },
+    initiative: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    },
     price: {
         type: DataTypes.INTEGER,
-        defaultValue: null,
+        defaultValue: 5,
     },
 }, {
     sequelize,

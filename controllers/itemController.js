@@ -1,4 +1,5 @@
 const { Sequelize, Op } = require('sequelize');
+
 const { getItem } = require('../DAOs/ItemDAO');
 
 const Skill = require('../models/Skill');
@@ -32,6 +33,8 @@ async function generateItem(baseItem) {
             'armorClass': base.armorClass,
             'skillId': skillId[attributeId],
             'baseItemId': baseItem.id,
+            'initiative': baseItem.initiative,
+            'price': base.price,
         };
 
         item = await Item.create(item);
@@ -134,6 +137,7 @@ async function generateBase(baseItem, tierId) {
         'image': baseItem.image,
         'name': baseItem.name,
         'attack': baseItem.minAttack,
+        'price': baseItem.basePrice,
     };
 
     let baseWeights;
@@ -164,10 +168,13 @@ async function generateBase(baseItem, tierId) {
         attack = '1d' + (attack + bases.indexOf(baseTier));
     } else {
         //base.armorClass = baseItem.armorClass + bases.indexOf(baseTier);
-        base.armorClass = tierId > 4 ? (base.armorClass + 2) : base.armorClass;
+        base.armorClass = tierId > 4 ? (base.armorClass + 1) : base.armorClass;
     }
 
-    base.image = `${baseItem.image + baseTier}.png`;
+    const uniqueBaseItem = baseItem.image.split('.');
+    base.image = uniqueBaseItem[(uniqueBaseItem.length - 1)] === 'png' ? `${baseItem.image}` : `${baseItem.image}${baseTier}.png`;
+
+    base.price = baseItem.basePrice * (tierId + 1);
     base.name = `${base.name + ` - ` + baseTier}`;
     base.attack = attack;
 

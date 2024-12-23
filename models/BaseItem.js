@@ -72,6 +72,15 @@ BaseItem.init({
         allowNull: false,
         defaultValue: 1,
     },
+    initiative: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    },
+    basePrice: {
+        type: DataTypes.INTEGER,
+        defaultValue: 5,
+    },
 }, {
     sequelize,
     modelName: 'BaseItem',

@@ -65,6 +65,7 @@ Character.init({
     raceId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        defaultValue: 1,
         references: {
             model: 'Races',
             key: 'id',
@@ -95,7 +96,7 @@ Character.init({
     wellness: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: 100,
+        defaultValue: 50,
     },
     gold: {
         type: DataTypes.INTEGER,
