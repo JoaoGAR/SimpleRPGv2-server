@@ -4,7 +4,7 @@ const { sequelize } = require('../config/db');
 class Job extends Model {
     static associate(models) {
         Job.belongsTo(models.Attribute, {
-            foreignKey: 'attributeId',
+            foreignKey: 'id',
             as: 'attribute',
         });
         Job.hasMany(models.Requirement, {

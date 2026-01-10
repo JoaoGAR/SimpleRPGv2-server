@@ -39,8 +39,8 @@ const Skill = sequelize.define('Skill', {
 });
 
 Skill.associate = (models) => {
-    Skill.hasOne(models.Attribute, {
-        foreignKey: 'attributeId',
+    Skill.belongsTo(models.Attribute, {
+        foreignKey: 'id',
         as: 'attribute',
     });
 };

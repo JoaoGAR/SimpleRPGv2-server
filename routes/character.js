@@ -20,7 +20,7 @@ router.post('/register', authMiddleware, async (req, res) => {
 
         character = await Character.create({
             name,
-            raceId,
+            raceId : 1,
             coordsx,
             coordsy,
             userId,

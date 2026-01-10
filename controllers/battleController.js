@@ -143,7 +143,7 @@ async function battle(attacker, target, roundN) {
 
     const round = {
         message: `ROUND: ${roundN}| ${attacker.name} atacou ${target.name}(${target.armorClass}[AC]) com ${ability.name}(${ability.attack}).
-                    Ele rolou ${attack.d20 + attack.skillModifier}(${attack.d20} + ${attack.skillModifier}[SM]) no teste de acerto. O golpe foi certeiro, causando ${attack.damage}(${attack.weaponDamage}[WD] + ${attack.abilityDamage}[AD] + ${attack.skillModifier}[SM]) de dano ao ${target.name}(${target.wellness})!`,
+                Ele rolou ${attack.d20 + attack.skillModifier}(${attack.d20} + ${attack.skillModifier}[SM]) no teste de acerto. O golpe foi certeiro, causando ${attack.damage}(${attack.weaponDamage}[WD] + ${attack.abilityDamage}[AD] + ${attack.skillModifier}[SM]) de dano ao ${target.name}(${target.wellness})!`,
         rols: attack
     };
 
