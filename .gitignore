@@ -1,1 +1,14 @@
-node_modules
+# ambientes
+.env
+docker/.env
+
+# Node
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker
+*.pid
