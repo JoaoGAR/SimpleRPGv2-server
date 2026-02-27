@@ -19,7 +19,7 @@ async function generateItem(baseItem) {
         const tierId = await getRandomTier();
         const attributeIds = baseItem.attributeId.split(',').map(Number);
         const attributeId = attributeIds[Math.floor(Math.random() * attributeIds.length)];
-        const skillId = { 1: 1, 2: 3, 3: 5 };
+        const skillId = { 1: 1, 2: 5, 3: 9 };
         const base = await generateBase(baseItem, tierId);
 
         let item = {
@@ -38,7 +38,7 @@ async function generateItem(baseItem) {
         };
 
         item = await Item.create(item);
-        if (item.categoryId === 7) {
+        if (baseItem.categoryId == 1) {
             const abilities = await createItemAbilities(item, skillId[attributeId]);
         } else {
             const skills = await createItemSkills(item, attributeIds);
@@ -55,7 +55,8 @@ async function generateItem(baseItem) {
 
 async function getRandomTier() {
     const tiers = await Tier.findAll();
-    const random = Math.floor(Math.random() * 100);
+    const totalWeight = tiers.reduce((sum, t) => sum + t.weight, 0);
+    const random = Math.random() * totalWeight;
     let cumulativeChance = 0;
 
     for (const tier of tiers) {
@@ -64,7 +65,7 @@ async function getRandomTier() {
             return tier.id;
         }
     }
-    return 1;
+    return tiers[tiers.length - 1].id;
 }
 
 async function getRandomAttack(minAttack, maxAttack) {
@@ -83,7 +84,7 @@ async function createItemSkills(item, attributeIds) {
 
     const randomSkills = skills
         .map(skill => skill.id)
-        .sort(() => Math.random() - 0.5)
+        .sort(() => 0.5 - Math.random())
         .slice(0, quantity);
     for (const skillId of randomSkills) {
         const skillLevel = item.tierId >= 5 ? (Math.floor(Math.random() * 5) + 1) : (Math.floor(Math.random() * 2) + 1);
@@ -159,7 +160,7 @@ async function generateBase(baseItem, tierId) {
         }
     }
 
-    if (baseItem.categoryId == 7) {
+    if (baseItem.categoryId == 1) {
         let minAttack = baseItem.minAttack;
         let maxAttack = baseItem.maxAttack;
         maxAttack = tierId < 4 ? Math.round((maxAttack / 2)) : maxAttack;

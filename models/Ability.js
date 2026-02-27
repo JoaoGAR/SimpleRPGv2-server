@@ -41,7 +41,7 @@ const Ability = sequelize.define('Ability', {
     typeId: {
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: 1,
+        defaultValue: '1',
     },
     skillId: {
         type: DataTypes.INTEGER,

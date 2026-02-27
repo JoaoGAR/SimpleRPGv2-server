@@ -51,9 +51,13 @@ async function getJobs(req, res) {
         character = await equipmentBonus(character, equipment);
 
         const availableJobs = jobsLocations.filter(jobLocation =>
-            jobLocation.job.requirements.every(requirement => {
-                const characterSkill = character.skills.find(cs => cs.skillId === requirement.skillId) || { level: 0 };
-                return (characterSkill.level + 2) >= requirement.skillLevel;
+            (jobLocation.job?.requirements ?? []).every(requirement => {
+                const characterSkill =
+                    character.skills?.find(cs => cs.skillId === requirement.skillId);
+
+                const level = characterSkill?.level ?? 0;
+
+                return (level + 2) >= requirement.skillLevel;
             })
         );
         res.send(availableJobs);
@@ -160,7 +164,7 @@ async function finishWork(req, res) {
             travellingId = travelling.id;
         };
 
-        await queue.destroy();
+        //await queue.destroy();
         character = await getCharacterByUser(userId);
         res.send({ jobResult, 'status': 200, 'message': getResponseMessage('workCompleted'), 'travellingId': travellingId, 'character': character });
 

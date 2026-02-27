@@ -12,11 +12,11 @@ const rewardCalculator = async (character, queue) => {
 
     let rewardQtd = await rollDice(`1d${jobRewards.length}`);
     let penalty = 1;
-    let message = 'Trabalho exemplar.';
+    let message = 'Exceptional work.';
     let status = 200;
 
     if (calcd20 < difficulty) {
-        message = 'Acidente de trabalho.';
+        message = 'Failure.';
         rewardQtd -= difficulty;
         penalty = 2;
     }

@@ -10,7 +10,7 @@ const CharacterAttribute = require('../models/CharacterAttribute');
 async function getSkills(req, res) {
     try {
         let queue = await Attribute.findAll({
-            order: [['attributeId', 'ASC']], include: [{ model: Skill, as: 'skill' }]
+            order: [['id', 'ASC']], include: [{ model: Skill, as: 'skill' }]
         });
         res.send(queue);
     } catch (error) {

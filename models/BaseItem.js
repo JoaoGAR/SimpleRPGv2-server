@@ -69,8 +69,7 @@ BaseItem.init({
     },
     armorType: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 1,
+        defaultValue: null,
     },
     initiative: {
         type: DataTypes.INTEGER,

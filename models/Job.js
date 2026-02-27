@@ -4,16 +4,20 @@ const { sequelize } = require('../config/db');
 class Job extends Model {
     static associate(models) {
         Job.belongsTo(models.Attribute, {
-            foreignKey: 'id',
+            foreignKey: 'attributeId',
             as: 'attribute',
         });
+
         Job.hasMany(models.Requirement, {
+            foreignKey: 'jobId',
             as: 'requirements',
         });
+
         Job.hasMany(models.Reward, {
             foreignKey: 'jobId',
             as: 'rewards',
         });
+
         Job.hasMany(models.JobLocation, {
             foreignKey: 'jobId',
             as: 'locations',

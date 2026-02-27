@@ -40,7 +40,7 @@ const Skill = sequelize.define('Skill', {
 
 Skill.associate = (models) => {
     Skill.belongsTo(models.Attribute, {
-        foreignKey: 'id',
+        foreignKey: 'attributeId',
         as: 'attribute',
     });
 };
