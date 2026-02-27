@@ -56,6 +56,48 @@ const Ability = sequelize.define('Ability', {
         allowNull: false,
         defaultValue: '50',
     },
+    actionTypeId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+        references: {
+            model: 'ActionTypes',
+            key: 'id',
+        },
+    },
+    spellLevel: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    },
+    damageTypeId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+        references: {
+            model: 'DamageTypes',
+            key: 'id',
+        },
+    },
+    requiresAttackRoll: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    },
+    requiresSaving_throw: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+    },
+    savingThrowSkillId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null,
+        references: {
+            model: 'Skills',
+            key: 'id',
+        },
+    },
 }, {
     timestamps: true,
 });
@@ -69,6 +111,24 @@ Ability.associate = (models) => {
         foreignKey: 'skillId',
         as: 'skill',
     });
+    Ability.belongsTo(models.Skill, {
+        foreignKey: 'savingThrowSkillId',
+        as: 'savingThrowSkill',
+    });
+
+    if (models.ActionType) {
+        Ability.belongsTo(models.ActionType, {
+            foreignKey: 'actionTypeId',
+            as: 'actionType',
+        });
+    }
+
+    if (models.DamageType) {
+        Ability.belongsTo(models.DamageType, {
+            foreignKey: 'damageTypeId',
+            as: 'damageType',
+        });
+    }
 };
 
 module.exports = Ability;
