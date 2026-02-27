@@ -39,9 +39,13 @@ const Ability = sequelize.define('Ability', {
         allowNull: true,
     },
     typeId: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: '1',
+        defaultValue: 1,
+        references: {
+            model: 'AbilityTypes',
+            key: 'id',
+        },
     },
     skillId: {
         type: DataTypes.INTEGER,
@@ -120,6 +124,13 @@ Ability.associate = (models) => {
         Ability.belongsTo(models.ActionType, {
             foreignKey: 'actionTypeId',
             as: 'actionType',
+        });
+    }
+
+    if (models.AbilityType) {
+        Ability.belongsTo(models.AbilityType, {
+            foreignKey: 'typeId',
+            as: 'type',
         });
     }
 

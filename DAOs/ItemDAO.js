@@ -4,6 +4,8 @@ const Tier = require('../models/Tier');
 const ItemSkill = require('../models/ItemSkill');
 const Skill = require('../models/Skill');
 const Ability = require('../models/Ability');
+const AbilityType = require('../models/AbilityType');
+const DamageType = require('../models/DamageType');
 const WeaponAbility = require('../models/WeaponAbility');
 const Category = require('../models/Category');
 const Item = require('../models/Item');
@@ -11,7 +13,7 @@ const Inventory = require('../models/Inventory');
 
 Item.associate({ Tier, Inventory, Category, ItemSkill, WeaponAbility, Skill });
 ItemSkill.associate({ Item, Skill });
-Ability.associate({ Tier, Skill });
+Ability.associate({ Tier, Skill, AbilityType, DamageType });
 WeaponAbility.associate({ Item, Ability });
 
 
