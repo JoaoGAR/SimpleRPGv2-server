@@ -39,6 +39,8 @@ app.use('/api/battle', require('./routes/battle'));
 app.use('/api/market', require('./routes/market'));
 app.use('/api/market/buyItem', require('./routes/market'));
 
+app.use('/api/craft', require('./routes/craft'));
+
 app.get('/', (req, res) => {
     res.send('Authentication API');
 });
