@@ -3,12 +3,13 @@ const Skill = require('../models/Skill');
 const Category = require('../models/Category');
 const Item = require('../models/Item');
 const Character = require('../models/Character');
+const Creature = require('../models/Creature');
 const Inventory = require('../models/Inventory');
 const Tier = require('../models/Tier');
 const Ability = require('../models/Ability');
 const WeaponAbility = require('../models/WeaponAbility');
 
-Inventory.associate({ Character, Item });
+Inventory.associate({ Character, Creature, Item });
 
 async function getInventoryByCharacter(characterId, inventoryId = null) {
 

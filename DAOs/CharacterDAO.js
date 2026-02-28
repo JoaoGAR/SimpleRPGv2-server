@@ -10,7 +10,9 @@ const Inventory = require('../models/Inventory');
 const Class = require('../models/Class');
 const CharacterAttribute = require('../models/CharacterAttribute');
 const CharacterSkill = require('../models/CharacterSkill');
+const CreatureSkill = require('../models/CreatureSkill');
 const Character = require('../models/Character');
+const Creature = require('../models/Creature');
 const Race = require('../models/Race');
 const Ability = require('../models/Ability');
 const WeaponAbility = require('../models/WeaponAbility');
@@ -19,7 +21,9 @@ Attribute.associate({ Skill });
 Skill.associate({ Attribute });
 CharacterAttribute.associate({ Character, Attribute });
 CharacterSkill.associate({ Character, Skill });
+CreatureSkill.associate({ Creature, Skill });
 Character.associate({ Race, User, Class, WorkQueue, CharacterAttribute, CharacterSkill, Inventory });
+Creature.associate({ Inventory, CreatureSkill });
 
 async function getCharacterByUser(userId = null, characterId = null) {
 
