@@ -15,7 +15,7 @@ async function getInventory(req, res) {
         res.send(inventory);
     } catch (error) {
         console.error(error.message);
-        res.status(500).send('Erro no servidor');
+        res.status(500).send('Server error');
     }
 }
 
@@ -30,7 +30,7 @@ async function equipItem(req, res) {
         inventory = inventory[0];
 
         if (!inventory) {
-            return res.json({ 'status': 400, 'msg': 'Item não encontrado ou não está no inventário do personagem selecionado.' });
+            return res.json({ 'status': 400, 'msg': "Item not found or not in the selected character's inventory." });
 
         }
 
@@ -67,11 +67,11 @@ async function equipItem(req, res) {
 
         character = await getCharacterByUser(userId);
 
-        return res.json({ 'status': 200, 'msg': 'Item equipado.', 'prevEquipment': prevEquipment, 'inventory': inventory, 'character': character });
+        return res.json({ 'status': 200, 'msg': 'Item equipped.', 'prevEquipment': prevEquipment, 'inventory': inventory, 'character': character });
 
     } catch (error) {
         console.error(error.message);
-        res.status(500).send('Erro no servidor');
+        res.status(500).send('Server error');
     }
 }
 

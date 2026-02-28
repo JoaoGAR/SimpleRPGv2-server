@@ -7,7 +7,7 @@ module.exports = function (req, res, next) {
     const token = req.header('Authorization');
 
     if (!token) {
-        return res.status(401).json({ msg: 'Usuário sem autenticação, refaça o login.' });
+        return res.status(401).json({ msg: 'User is not authenticated. Please log in again.' });
     }
 
     try {
@@ -17,6 +17,6 @@ module.exports = function (req, res, next) {
         req.user = decoded.user;
         next();
     } catch (error) {
-        res.status(401).json({ msg: 'Token inválido' });
+        res.status(401).json({ msg: 'Invalid token' });
     }
 };

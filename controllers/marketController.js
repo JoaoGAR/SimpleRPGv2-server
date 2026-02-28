@@ -9,7 +9,7 @@ async function fillMarket(req, res) {
         res.send(marketitems);
     } catch (error) {
         console.error(error.message);
-        res.status(500).send('Erro no servidor');
+        res.status(500).send('Server error');
     }
 }
 
@@ -20,10 +20,10 @@ async function buyItem(req, res) {
         const character = await getCharacterByUser(null, characterId);
         const gold = (character.gold - itemPrice);
         await character.update({ gold: gold });
-        res.json({ status: 200, msg: 'Item adicionado ao seu inventário.', character: character });
+        res.json({ status: 200, msg: 'Item added to your inventory.', character: character });
     } catch (error) {
         console.error(error.message);
-        res.status(500).send('Erro no servidor');
+        res.status(500).send('Server error');
     }
 }
 

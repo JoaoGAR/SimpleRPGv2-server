@@ -12,7 +12,7 @@ const Race = sequelize.define('Race', {
         allowNull: false,
         validate: {
             notEmpty: {
-                msg: 'Nome obrigatório.',
+                msg: 'Name is required.',
             },
         },
     },

@@ -12,7 +12,7 @@ const User = sequelize.define('User', {
         allowNull: false,
         validate: {
             notEmpty: {
-                msg: 'Nome obrigatório.',
+                msg: 'Name is required.',
             },
         },
     },
@@ -20,11 +20,11 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
         unique: {
-            msg: 'Email já está em uso.',
+            msg: 'Email is already in use.',
         },
         validate: {
             isEmail: {
-                msg: 'Insira um e-mail válido.',
+                msg: 'Please provide a valid email.',
             },
         },
     },
@@ -34,7 +34,7 @@ const User = sequelize.define('User', {
         validate: {
             len: {
                 args: [8],
-                msg: 'A senha deve ter pelo menos 8 caracteres.',
+                msg: 'Password must be at least 8 characters long.',
             },
         },
     },

@@ -1,11 +1,11 @@
 module.exports.getResponseMessage = (key) => {
     const messages = {
-        serverError: 'Erro no servidor.',
-        queueFull: 'A fila de trabalho do personagem já está cheia.',
-        queueNotFound: 'Fila não encontrada para o personagem em questão.',
-        workCompleted: 'Trabalho concluído com sucesso.',
-        workDismissed: 'Trabalho retirado da fila.',
-        workQueued: 'Trabalho adicionado à fila com sucesso.',
+        serverError: 'Server error.',
+        queueFull: "The character's work queue is already full.",
+        queueNotFound: 'Queue not found for the specified character.',
+        workCompleted: 'Work completed successfully.',
+        workDismissed: 'Work removed from queue.',
+        workQueued: 'Work added to queue successfully.',
     };
-    return messages[key] || 'Mensagem não encontrada.';
+    return messages[key] || 'Message not found.';
 };

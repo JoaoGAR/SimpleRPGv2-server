@@ -40,9 +40,9 @@ app.use('/api/market', require('./routes/market'));
 app.use('/api/market/buyItem', require('./routes/market'));
 
 app.get('/', (req, res) => {
-    res.send('API de Autenticação');
+    res.send('Authentication API');
 });
 
 const PORT = process.env.PORT || 3001;
 
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

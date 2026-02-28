@@ -14,7 +14,7 @@ router.get('/get', authMiddleware, async (req, res) => {
         res.send(structures);
     } catch (error) {
         console.error(error.message);
-        res.status(500).send('Erro no servidor');
+        res.status(500).send('Server error');
     }
 });
 
@@ -25,7 +25,7 @@ router.get('/getById', authMiddleware, async (req, res) => {
         res.send(structure);
     } catch (error) {
         console.error(error.message);
-        res.status(500).send('Erro no servidor');
+        res.status(500).send('Server error');
     }
 });
 
