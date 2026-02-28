@@ -4,83 +4,7 @@ module.exports = {
     async up(queryInterface, Sequelize) {
         const now = new Date();
 
-        const resolveAttackByTier = (tierId) => {
-            const clampedTier = Math.max(1, Math.min(8, Number(tierId) || 1));
-            return `1d${Math.min(8, clampedTier + 1)}`;
-        };
-
-        const resolveAbilityMetadata = (ability) => {
-            const isDamage = ability.typeId === 1;
-
-            if (!isDamage) {
-                if (ability.typeId === 2) {
-                    return {
-                        actionTypeId: 1,
-                        spellLevel: Math.max(0, ability.tierId - 1),
-                        damageTypeId: 12,
-                        requiresAttackRoll: false,
-                        requiresSaving_throw: false,
-                        savingThrowSkillId: null,
-                    };
-                }
-
-                if (ability.typeId === 3) {
-                    return {
-                        actionTypeId: 1,
-                        spellLevel: Math.max(0, ability.tierId - 1),
-                        damageTypeId: 10,
-                        requiresAttackRoll: false,
-                        requiresSaving_throw: false,
-                        savingThrowSkillId: null,
-                    };
-                }
-
-                if (ability.typeId === 4) {
-                    return {
-                        actionTypeId: 1,
-                        spellLevel: Math.max(0, ability.tierId - 1),
-                        damageTypeId: ability.skillId === 21 || ability.skillId === 23 ? 7 : 9,
-                        requiresAttackRoll: false,
-                        requiresSaving_throw: true,
-                        savingThrowSkillId: 18,
-                    };
-                }
-
-                return {
-                    actionTypeId: 1,
-                    spellLevel: Math.max(0, ability.tierId - 1),
-                    damageTypeId: 10,
-                    requiresAttackRoll: false,
-                    requiresSaving_throw: false,
-                    savingThrowSkillId: null,
-                };
-            }
-
-            const bySkill = {
-                1: { damageTypeId: 1, requiresAttackRoll: true, requiresSaving_throw: false, savingThrowSkillId: null },
-                5: { damageTypeId: 2, requiresAttackRoll: false, requiresSaving_throw: true, savingThrowSkillId: 8 },
-                9: { damageTypeId: 1, requiresAttackRoll: true, requiresSaving_throw: false, savingThrowSkillId: null },
-                13: { damageTypeId: 9, requiresAttackRoll: false, requiresSaving_throw: true, savingThrowSkillId: 18 },
-                17: { damageTypeId: 8, requiresAttackRoll: false, requiresSaving_throw: true, savingThrowSkillId: 18 },
-                21: { damageTypeId: 7, requiresAttackRoll: false, requiresSaving_throw: true, savingThrowSkillId: 18 },
-            };
-
-            const overridesByName = {
-                'Guiding Bolt': { requiresAttackRoll: true, requiresSaving_throw: false, savingThrowSkillId: null },
-                'Sacred Flame': { requiresAttackRoll: false, requiresSaving_throw: true, savingThrowSkillId: 18 },
-            };
-
-            return {
-                actionTypeId: 1,
-                spellLevel: Math.max(0, ability.tierId - 1),
-                ...bySkill[ability.skillId],
-                ...(overridesByName[ability.name] || {}),
-            };
-        };
-
         const abilities = [
-
-            // ===== DAMAGE: MELEE (skillId: 1) =====
             {
                 name: 'Cleave',
                 description: 'Basic strength cleave attack.',
@@ -88,10 +12,16 @@ module.exports = {
                 skillId: 1,
                 tierId: 1,
                 typeId: 1,
-                attack: null,
+                attack: '1d2',
                 weight: '50',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 0,
+                damageTypeId: 1,
+                requiresAttackRoll: true,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
             {
                 name: 'Heavy Strike',
@@ -100,10 +30,16 @@ module.exports = {
                 skillId: 1,
                 tierId: 2,
                 typeId: 1,
-                attack: null,
+                attack: '1d3',
                 weight: '45',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 1,
+                damageTypeId: 1,
+                requiresAttackRoll: true,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
             {
                 name: 'Sweeping Slash',
@@ -112,10 +48,16 @@ module.exports = {
                 skillId: 1,
                 tierId: 3,
                 typeId: 1,
-                attack: null,
+                attack: '1d4',
                 weight: '30',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 2,
+                damageTypeId: 1,
+                requiresAttackRoll: true,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
             {
                 name: 'Crushing Blow',
@@ -124,10 +66,16 @@ module.exports = {
                 skillId: 1,
                 tierId: 5,
                 typeId: 1,
-                attack: null,
+                attack: '1d6',
                 weight: '14',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 4,
+                damageTypeId: 1,
+                requiresAttackRoll: true,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
             {
                 name: 'Titanbreaker',
@@ -136,13 +84,17 @@ module.exports = {
                 skillId: 1,
                 tierId: 7,
                 typeId: 1,
-                attack: null,
+                attack: '1d8',
                 weight: '4',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 6,
+                damageTypeId: 1,
+                requiresAttackRoll: true,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
-
-            // ===== DAMAGE: ARCANISM (skillId: 5) =====
             {
                 name: 'Immolate',
                 description: 'Basic fire intelligence spell.',
@@ -150,10 +102,16 @@ module.exports = {
                 skillId: 5,
                 tierId: 1,
                 typeId: 1,
-                attack: null,
+                attack: '1d2',
                 weight: '50',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 0,
+                damageTypeId: 2,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 8
             },
             {
                 name: 'Acid Spray',
@@ -162,10 +120,16 @@ module.exports = {
                 skillId: 5,
                 tierId: 2,
                 typeId: 1,
-                attack: null,
+                attack: '1d3',
                 weight: '45',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 1,
+                damageTypeId: 2,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 8
             },
             {
                 name: 'Thunderwave',
@@ -174,10 +138,16 @@ module.exports = {
                 skillId: 5,
                 tierId: 3,
                 typeId: 1,
-                attack: null,
+                attack: '1d4',
                 weight: '30',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 2,
+                damageTypeId: 2,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 8
             },
             {
                 name: 'Chain Lightning',
@@ -186,10 +156,16 @@ module.exports = {
                 skillId: 5,
                 tierId: 5,
                 typeId: 1,
-                attack: null,
+                attack: '1d6',
                 weight: '14',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 4,
+                damageTypeId: 2,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 8
             },
             {
                 name: 'Meteor Swarm',
@@ -198,13 +174,17 @@ module.exports = {
                 skillId: 5,
                 tierId: 8,
                 typeId: 1,
-                attack: null,
+                attack: '1d8',
                 weight: '2',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 7,
+                damageTypeId: 2,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 8
             },
-
-            // ===== DAMAGE: ACCURACY (skillId: 9) =====
             {
                 name: 'Heavy shot',
                 description: 'Heavy dexterity ranged attack.',
@@ -212,10 +192,16 @@ module.exports = {
                 skillId: 9,
                 tierId: 1,
                 typeId: 1,
-                attack: null,
+                attack: '1d2',
                 weight: '50',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 0,
+                damageTypeId: 1,
+                requiresAttackRoll: true,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
             {
                 name: 'Explosive shot',
@@ -224,10 +210,16 @@ module.exports = {
                 skillId: 9,
                 tierId: 2,
                 typeId: 1,
-                attack: null,
+                attack: '1d3',
                 weight: '45',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 1,
+                damageTypeId: 1,
+                requiresAttackRoll: true,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
             {
                 name: 'Piercing Volley',
@@ -236,10 +228,16 @@ module.exports = {
                 skillId: 9,
                 tierId: 3,
                 typeId: 1,
-                attack: null,
+                attack: '1d4',
                 weight: '30',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 2,
+                damageTypeId: 1,
+                requiresAttackRoll: true,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
             {
                 name: 'Sniper Mark',
@@ -248,10 +246,16 @@ module.exports = {
                 skillId: 9,
                 tierId: 5,
                 typeId: 1,
-                attack: null,
+                attack: '1d6',
                 weight: '14',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 4,
+                damageTypeId: 1,
+                requiresAttackRoll: true,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
             {
                 name: 'Rain of Arrows',
@@ -260,13 +264,17 @@ module.exports = {
                 skillId: 9,
                 tierId: 7,
                 typeId: 1,
-                attack: null,
+                attack: '1d8',
                 weight: '4',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 6,
+                damageTypeId: 1,
+                requiresAttackRoll: true,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
-
-            // ===== DAMAGE: PERSUASION (skillId: 13) =====
             {
                 name: 'Vicious Mockery',
                 description: 'Psychic insult that wounds through humiliation.',
@@ -274,10 +282,16 @@ module.exports = {
                 skillId: 13,
                 tierId: 1,
                 typeId: 1,
-                attack: null,
+                attack: '1d2',
                 weight: '45',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 0,
+                damageTypeId: 9,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 18
             },
             {
                 name: 'Dissonant Whispers',
@@ -286,10 +300,16 @@ module.exports = {
                 skillId: 13,
                 tierId: 2,
                 typeId: 1,
-                attack: null,
+                attack: '1d3',
                 weight: '38',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 1,
+                damageTypeId: 9,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 18
             },
             {
                 name: 'Mind Spike',
@@ -298,10 +318,16 @@ module.exports = {
                 skillId: 13,
                 tierId: 3,
                 typeId: 1,
-                attack: null,
+                attack: '1d4',
                 weight: '26',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 2,
+                damageTypeId: 9,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 18
             },
             {
                 name: 'Synaptic Pulse',
@@ -310,10 +336,16 @@ module.exports = {
                 skillId: 13,
                 tierId: 5,
                 typeId: 1,
-                attack: null,
+                attack: '1d6',
                 weight: '12',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 4,
+                damageTypeId: 9,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 18
             },
             {
                 name: 'Word of Ruin',
@@ -322,13 +354,17 @@ module.exports = {
                 skillId: 13,
                 tierId: 8,
                 typeId: 1,
-                attack: null,
+                attack: '1d8',
                 weight: '2',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 7,
+                damageTypeId: 9,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 18
             },
-
-            // ===== DAMAGE: FAITH (skillId: 17) =====
             {
                 name: 'Guiding Bolt',
                 description: 'Radiant blast that marks enemies for follow-up attacks.',
@@ -336,10 +372,16 @@ module.exports = {
                 skillId: 17,
                 tierId: 1,
                 typeId: 1,
-                attack: null,
+                attack: '1d2',
                 weight: '45',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 0,
+                damageTypeId: 8,
+                requiresAttackRoll: true,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
             {
                 name: 'Sacred Flame',
@@ -348,10 +390,16 @@ module.exports = {
                 skillId: 17,
                 tierId: 2,
                 typeId: 1,
-                attack: null,
+                attack: '1d3',
                 weight: '38',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 1,
+                damageTypeId: 8,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 18
             },
             {
                 name: 'Spirit Lance',
@@ -360,10 +408,16 @@ module.exports = {
                 skillId: 17,
                 tierId: 3,
                 typeId: 1,
-                attack: null,
+                attack: '1d4',
                 weight: '26',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 2,
+                damageTypeId: 8,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 18
             },
             {
                 name: 'Divine Wrath',
@@ -372,10 +426,16 @@ module.exports = {
                 skillId: 17,
                 tierId: 5,
                 typeId: 1,
-                attack: null,
+                attack: '1d6',
                 weight: '12',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 4,
+                damageTypeId: 8,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 18
             },
             {
                 name: 'Judgement Nova',
@@ -384,13 +444,17 @@ module.exports = {
                 skillId: 17,
                 tierId: 8,
                 typeId: 1,
-                attack: null,
+                attack: '1d8',
                 weight: '2',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 7,
+                damageTypeId: 8,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 18
             },
-
-            // ===== DAMAGE: DARK ARTS (skillId: 21) =====
             {
                 name: 'Shadow Bolt',
                 description: 'A dark projectile that drains life essence.',
@@ -398,10 +462,16 @@ module.exports = {
                 skillId: 21,
                 tierId: 1,
                 typeId: 1,
-                attack: null,
+                attack: '1d2',
                 weight: '45',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 0,
+                damageTypeId: 7,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 18
             },
             {
                 name: 'Necrotic Touch',
@@ -410,10 +480,16 @@ module.exports = {
                 skillId: 21,
                 tierId: 2,
                 typeId: 1,
-                attack: null,
+                attack: '1d3',
                 weight: '38',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 1,
+                damageTypeId: 7,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 18
             },
             {
                 name: 'Soul Rend',
@@ -422,10 +498,16 @@ module.exports = {
                 skillId: 21,
                 tierId: 3,
                 typeId: 1,
-                attack: null,
+                attack: '1d4',
                 weight: '26',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 2,
+                damageTypeId: 7,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 18
             },
             {
                 name: 'Blight',
@@ -434,10 +516,16 @@ module.exports = {
                 skillId: 21,
                 tierId: 5,
                 typeId: 1,
-                attack: null,
+                attack: '1d6',
                 weight: '12',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 4,
+                damageTypeId: 7,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 18
             },
             {
                 name: 'Abyssal Cataclysm',
@@ -446,13 +534,17 @@ module.exports = {
                 skillId: 21,
                 tierId: 8,
                 typeId: 1,
-                attack: null,
+                attack: '1d8',
                 weight: '2',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 7,
+                damageTypeId: 7,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 18
             },
-
-            // ===== HEAL =====
             {
                 name: 'Cure Wounds',
                 description: 'Basic divine healing touch for early adventures.',
@@ -460,10 +552,16 @@ module.exports = {
                 skillId: 20,
                 tierId: 1,
                 typeId: 2,
-                attack: null,
+                attack: '1d2',
                 weight: '45',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 0,
+                damageTypeId: 12,
+                requiresAttackRoll: false,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
             {
                 name: 'Prayer of Healing',
@@ -472,10 +570,16 @@ module.exports = {
                 skillId: 20,
                 tierId: 3,
                 typeId: 2,
-                attack: null,
+                attack: '1d4',
                 weight: '22',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 2,
+                damageTypeId: 12,
+                requiresAttackRoll: false,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
             {
                 name: 'Mass Heal',
@@ -484,13 +588,17 @@ module.exports = {
                 skillId: 20,
                 tierId: 8,
                 typeId: 2,
-                attack: null,
+                attack: '1d8',
                 weight: '1',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 7,
+                damageTypeId: 12,
+                requiresAttackRoll: false,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
-
-            // ===== BUFF =====
             {
                 name: 'Bless',
                 description: 'Improves allies accuracy and resolve.',
@@ -498,10 +606,16 @@ module.exports = {
                 skillId: 17,
                 tierId: 1,
                 typeId: 3,
-                attack: null,
+                attack: '1d2',
                 weight: '40',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 0,
+                damageTypeId: 10,
+                requiresAttackRoll: false,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
             {
                 name: 'Haste',
@@ -510,10 +624,16 @@ module.exports = {
                 skillId: 5,
                 tierId: 4,
                 typeId: 3,
-                attack: null,
+                attack: '1d5',
                 weight: '15',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 3,
+                damageTypeId: 10,
+                requiresAttackRoll: false,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
             {
                 name: 'Holy Aura',
@@ -522,13 +642,17 @@ module.exports = {
                 skillId: 17,
                 tierId: 7,
                 typeId: 3,
-                attack: null,
+                attack: '1d8',
                 weight: '2',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 6,
+                damageTypeId: 10,
+                requiresAttackRoll: false,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
-
-            // ===== DEBUFF =====
             {
                 name: 'Bane',
                 description: 'Weakens enemy offense and confidence.',
@@ -536,10 +660,16 @@ module.exports = {
                 skillId: 21,
                 tierId: 1,
                 typeId: 4,
-                attack: null,
+                attack: '1d2',
                 weight: '38',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 0,
+                damageTypeId: 7,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 18
             },
             {
                 name: 'Hold Person',
@@ -548,10 +678,16 @@ module.exports = {
                 skillId: 6,
                 tierId: 3,
                 typeId: 4,
-                attack: null,
+                attack: '1d4',
                 weight: '20',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 2,
+                damageTypeId: 9,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 18
             },
             {
                 name: 'Bestow Curse',
@@ -560,13 +696,17 @@ module.exports = {
                 skillId: 23,
                 tierId: 5,
                 typeId: 4,
-                attack: null,
+                attack: '1d6',
                 weight: '10',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 4,
+                damageTypeId: 7,
+                requiresAttackRoll: false,
+                requiresSaving_throw: true,
+                savingThrowSkillId: 18
             },
-
-            // ===== UTILITY =====
             {
                 name: 'Mage Armor',
                 description: 'Arcane shield that boosts defense in early game.',
@@ -574,10 +714,16 @@ module.exports = {
                 skillId: 8,
                 tierId: 1,
                 typeId: 5,
-                attack: null,
+                attack: '1d2',
                 weight: '35',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 0,
+                damageTypeId: 10,
+                requiresAttackRoll: false,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
             {
                 name: 'Misty Step',
@@ -586,10 +732,16 @@ module.exports = {
                 skillId: 12,
                 tierId: 3,
                 typeId: 5,
-                attack: null,
+                attack: '1d4',
                 weight: '18',
                 createdAt: now,
                 updatedAt: now,
+                actionTypeId: 1,
+                spellLevel: 2,
+                damageTypeId: 10,
+                requiresAttackRoll: false,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
             },
             {
                 name: 'Greater Invisibility',
@@ -598,23 +750,20 @@ module.exports = {
                 skillId: 10,
                 tierId: 6,
                 typeId: 5,
-                attack: null,
+                attack: '1d7',
                 weight: '6',
                 createdAt: now,
                 updatedAt: now,
-            },
-
+                actionTypeId: 1,
+                spellLevel: 5,
+                damageTypeId: 10,
+                requiresAttackRoll: false,
+                requiresSaving_throw: false,
+                savingThrowSkillId: null
+            }
         ];
 
-        const abilitiesWithMetadata = abilities.map((ability) => ({
-            ...ability,
-            attack: resolveAttackByTier(ability.tierId),
-            ...resolveAbilityMetadata(ability),
-            createdAt: now,
-            updatedAt: now,
-        }));
-
-        await queryInterface.bulkInsert('Abilities', abilitiesWithMetadata);
+        await queryInterface.bulkInsert('Abilities', abilities);
     },
 
     async down(queryInterface, Sequelize) {
