@@ -126,7 +126,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 1,
-                damageTypeId: 2,
+                damageTypeId: 5,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 8
@@ -144,7 +144,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 2,
-                damageTypeId: 2,
+                damageTypeId: 4,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 8
@@ -162,7 +162,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 4,
-                damageTypeId: 2,
+                damageTypeId: 4,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 8
@@ -216,7 +216,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 1,
-                damageTypeId: 1,
+                damageTypeId: 2,
                 requiresAttackRoll: true,
                 requiresSaving_throw: false,
                 savingThrowSkillId: null
@@ -240,7 +240,7 @@ module.exports = {
                 savingThrowSkillId: null
             },
             {
-                name: 'Sniper Mark',
+                name: 'Precise Shot',
                 description: 'Deadly precision shot with high critical impact.',
                 icon: 'abilities/dexterity/sniperMark.jfif',
                 skillId: 9,
@@ -288,7 +288,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 0,
-                damageTypeId: 9,
+                damageTypeId: 6,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 18
@@ -306,7 +306,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 1,
-                damageTypeId: 9,
+                damageTypeId: 6,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 18
@@ -324,7 +324,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 2,
-                damageTypeId: 9,
+                damageTypeId: 6,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 18
@@ -342,7 +342,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 4,
-                damageTypeId: 9,
+                damageTypeId: 6,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 18
@@ -360,7 +360,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 7,
-                damageTypeId: 9,
+                damageTypeId: 6,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 18
@@ -378,7 +378,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 0,
-                damageTypeId: 8,
+                damageTypeId: 7,
                 requiresAttackRoll: true,
                 requiresSaving_throw: false,
                 savingThrowSkillId: null
@@ -396,7 +396,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 1,
-                damageTypeId: 8,
+                damageTypeId: 7,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 18
@@ -414,7 +414,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 2,
-                damageTypeId: 8,
+                damageTypeId: 7,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 18
@@ -432,7 +432,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 4,
-                damageTypeId: 8,
+                damageTypeId: 7,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 18
@@ -450,7 +450,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 7,
-                damageTypeId: 8,
+                damageTypeId: 7,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 18
@@ -468,7 +468,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 0,
-                damageTypeId: 7,
+                damageTypeId: 8,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 18
@@ -486,7 +486,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 1,
-                damageTypeId: 7,
+                damageTypeId: 8,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 18
@@ -504,7 +504,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 2,
-                damageTypeId: 7,
+                damageTypeId: 8,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 18
@@ -522,7 +522,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 4,
-                damageTypeId: 7,
+                damageTypeId: 8,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 18
@@ -540,7 +540,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 7,
-                damageTypeId: 7,
+                damageTypeId: 8,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 18
@@ -558,7 +558,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 0,
-                damageTypeId: 12,
+                damageTypeId: 7,
                 requiresAttackRoll: false,
                 requiresSaving_throw: false,
                 savingThrowSkillId: null
@@ -576,7 +576,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 2,
-                damageTypeId: 12,
+                damageTypeId: 7,
                 requiresAttackRoll: false,
                 requiresSaving_throw: false,
                 savingThrowSkillId: null
@@ -594,7 +594,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 7,
-                damageTypeId: 12,
+                damageTypeId: 7,
                 requiresAttackRoll: false,
                 requiresSaving_throw: false,
                 savingThrowSkillId: null
@@ -612,7 +612,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 0,
-                damageTypeId: 10,
+                damageTypeId: 7,
                 requiresAttackRoll: false,
                 requiresSaving_throw: false,
                 savingThrowSkillId: null
@@ -630,7 +630,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 3,
-                damageTypeId: 10,
+                damageTypeId: 6,
                 requiresAttackRoll: false,
                 requiresSaving_throw: false,
                 savingThrowSkillId: null
@@ -648,7 +648,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 6,
-                damageTypeId: 10,
+                damageTypeId: 7,
                 requiresAttackRoll: false,
                 requiresSaving_throw: false,
                 savingThrowSkillId: null
@@ -666,7 +666,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 0,
-                damageTypeId: 7,
+                damageTypeId: 8,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 18
@@ -684,7 +684,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 2,
-                damageTypeId: 9,
+                damageTypeId: 1,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 18
@@ -702,7 +702,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 4,
-                damageTypeId: 7,
+                damageTypeId: 6,
                 requiresAttackRoll: false,
                 requiresSaving_throw: true,
                 savingThrowSkillId: 18
@@ -720,7 +720,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 0,
-                damageTypeId: 10,
+                damageTypeId: 7,
                 requiresAttackRoll: false,
                 requiresSaving_throw: false,
                 savingThrowSkillId: null
@@ -738,7 +738,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 2,
-                damageTypeId: 10,
+                damageTypeId: 6,
                 requiresAttackRoll: false,
                 requiresSaving_throw: false,
                 savingThrowSkillId: null
@@ -756,7 +756,7 @@ module.exports = {
                 updatedAt: now,
                 actionTypeId: 1,
                 spellLevel: 5,
-                damageTypeId: 10,
+                damageTypeId: 6,
                 requiresAttackRoll: false,
                 requiresSaving_throw: false,
                 savingThrowSkillId: null
