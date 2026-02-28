@@ -8,7 +8,7 @@ module.exports = {
             {
                 id: 1,
                 name: 'Peasant',
-                description: 'Um camponês simples, sem habilidades especiais.',
+                description: 'A simple peasant with no special abilities.',
                 icon: 'icons/classes/peasant.jfif',
                 image: 'icons/classes/peasant.jfif',
                 color1: 'white',
@@ -21,7 +21,7 @@ module.exports = {
             {
                 id: 2,
                 name: 'Warrior',
-                description: 'Um combatente robusto que confia na força bruta.',
+                description: 'A sturdy fighter who relies on brute strength.',
                 icon: 'icons/classes/warrior.jfif',
                 image: 'icons/classes/warrior.jfif',
                 color1: 'red',
@@ -34,7 +34,7 @@ module.exports = {
             {
                 id: 3,
                 name: 'Spellblade',
-                description: 'Um guerreiro que mistura força física com magia.',
+                description: 'A warrior who blends physical strength with magic.',
                 icon: 'icons/classes/spellblade.jfif',
                 image: 'icons/classes/spellblade.jfif',
                 color1: 'red',
@@ -47,7 +47,7 @@ module.exports = {
             {
                 id: 4,
                 name: 'Swashbuckler',
-                description: 'Um duelista ágil e destemido.',
+                description: 'An agile and fearless duelist.',
                 icon: 'icons/classes/swashbuckler.jfif',
                 image: 'icons/classes/swashbuckler.jfif',
                 color1: 'red',
@@ -60,7 +60,7 @@ module.exports = {
             {
                 id: 5,
                 name: 'Paladin',
-                description: 'Um cavaleiro honrado que protege os fracos.',
+                description: 'An honorable knight who protects the weak.',
                 icon: 'icons/classes/knight.jfif',
                 image: 'icons/classes/knight.jfif',
                 color1: 'red',
@@ -73,7 +73,7 @@ module.exports = {
             {
                 id: 6,
                 name: 'Crusader',
-                description: 'Um guerreiro sagrado que luta pela justiça.',
+                description: 'A holy warrior who fights for justice.',
                 icon: 'icons/classes/paladin.jfif',
                 image: 'icons/classes/paladin.jfif',
                 color1: 'red',
@@ -86,7 +86,7 @@ module.exports = {
             {
                 id: 7,
                 name: 'Hexblade',
-                description: 'Um guerreiro sombrio que canaliza magia oculta.',
+                description: 'A dark warrior who channels hidden magic.',
                 icon: 'icons/classes/hexblade.jfif',
                 image: 'icons/classes/hexblade.jfif',
                 color1: 'red',
@@ -99,7 +99,7 @@ module.exports = {
             {
                 id: 8,
                 name: 'Wizard',
-                description: 'Um estudioso das artes arcanas.',
+                description: 'A scholar of the arcane arts.',
                 icon: 'icons/classes/wizard.jfif',
                 image: 'icons/classes/wizard.jfif',
                 color1: 'blue',
@@ -112,7 +112,7 @@ module.exports = {
             {
                 id: 9,
                 name: 'Arcane Archer',
-                description: 'Um arqueiro que canaliza magia em seus disparos.',
+                description: 'An archer who channels magic into their shots.',
                 icon: 'icons/classes/arcane archer.jfif',
                 image: 'icons/classes/arcane archer.jfif',
                 color1: 'blue',
@@ -125,7 +125,7 @@ module.exports = {
             {
                 id: 10,
                 name: 'Illusionist',
-                description: 'Um mago que conjura feitiços através da música.',
+                description: 'A mage who casts spells through music.',
                 icon: 'icons/classes/spellsinger.jfif',
                 image: 'icons/classes/spellsinger.jfif',
                 color1: 'blue',
@@ -138,7 +138,7 @@ module.exports = {
             {
                 id: 11,
                 name: 'Theurgist',
-                description: 'Um conjurador que canaliza poderes divinos e arcanos.',
+                description: 'A spellcaster who channels divine and arcane powers.',
                 icon: 'icons/classes/theurgist.jfif',
                 image: 'icons/classes/theurgist.jfif',
                 color1: 'blue',
@@ -151,7 +151,7 @@ module.exports = {
             {
                 id: 12,
                 name: 'Summoner',
-                description: 'Um mestre das ilusões e enganos.',
+                description: 'A master of illusions and deception.',
                 icon: 'icons/classes/illusionist.jfif',
                 image: 'icons/classes/illusionist.jfif',
                 color1: 'blue',
@@ -164,7 +164,7 @@ module.exports = {
             {
                 id: 13,
                 name: 'Ranger',
-                description: 'Um caçador que domina a natureza e o arco.',
+                description: 'A hunter who masters nature and the bow.',
                 icon: 'icons/classes/ranger.jfif',
                 image: 'icons/classes/ranger.jfif',
                 color1: 'green',
@@ -177,7 +177,7 @@ module.exports = {
             {
                 id: 14,
                 name: 'Trickster',
-                description: 'Um trapaceiro astuto e imprevisível.',
+                description: 'A cunning and unpredictable trickster.',
                 icon: 'icons/classes/trickster.jfif',
                 image: 'icons/classes/trickster.jfif',
                 color1: 'green',
@@ -190,7 +190,7 @@ module.exports = {
             {
                 id: 15,
                 name: 'Monk',
-                description: 'Um mestre das artes marciais e da disciplina espiritual.',
+                description: 'A master of martial arts and spiritual discipline.',
                 icon: 'icons/classes/monk.jfif',
                 image: 'icons/classes/monk.jfif',
                 color1: 'green',
@@ -203,7 +203,7 @@ module.exports = {
             {
                 id: 16,
                 name: 'Assassin',
-                description: 'Um matador furtivo que age nas sombras.',
+                description: 'A stealthy killer who strikes from the shadows.',
                 icon: 'icons/classes/assassin.jfif',
                 image: 'icons/classes/assassin.jfif',
                 color1: 'green',
@@ -216,7 +216,7 @@ module.exports = {
             {
                 id: 17,
                 name: 'Bard',
-                description: 'Um artista que inspira aliados com música e magia.',
+                description: 'An artist who inspires allies with music and magic.',
                 icon: 'icons/classes/bard.jfif',
                 image: 'icons/classes/bard.jfif',
                 color1: 'pink',
@@ -229,7 +229,7 @@ module.exports = {
             {
                 id: 18,
                 name: 'Hierophant',
-                description: 'Um líder espiritual que guia com sabedoria.',
+                description: 'A spiritual leader who guides with wisdom.',
                 icon: 'icons/classes/hierophant.jfif',
                 image: 'icons/classes/hierophant.jfif',
                 color1: 'pink',
@@ -255,7 +255,7 @@ module.exports = {
             {
                 id: 20,
                 name: 'Cleric',
-                description: 'Um sacerdote devoto que canaliza milagres e proteção divina.',
+                description: 'A devoted priest who channels miracles and divine protection.',
                 icon: 'icons/classes/cleric.jfif',
                 image: 'icons/classes/cleric.jfif',
                 color1: 'yellow', // Sacred
@@ -268,7 +268,7 @@ module.exports = {
             {
                 id: 21,
                 name: 'Demonologist',
-                description: 'Um estudioso do abismo que domina pactos e conjurações sombrias.',
+                description: 'A scholar of the abyss who masters pacts and dark summonings.',
                 icon: 'icons/classes/demonologist.jfif',
                 image: 'icons/classes/demonologist.jfif',
                 color1: 'yellow', // Sacred

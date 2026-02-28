@@ -15,7 +15,7 @@ async function getSkills(req, res) {
         res.send(queue);
     } catch (error) {
         console.error(error.message);
-        res.status(500).send('Erro no servidor');
+        res.status(500).send('Server error');
     }
 }
 
@@ -36,7 +36,7 @@ async function getCharacterSkills(req, res) {
         res.send(queue);
     } catch (error) {
         console.error(error.message);
-        res.status(500).send('Erro no servidor');
+        res.status(500).send('Server error');
     }
 }
 
@@ -49,7 +49,7 @@ async function saveCharacterSkills(req, res) {
     try {
         const character = await getCharacterByUser(userId);
         if (!character) {
-            return res.status(400).json({ status: 400, msg: 'Personagem não existe ou não vinculado ao usuário logado.' });
+            return res.status(400).json({ status: 400, msg: 'Character does not exist or is not linked to the logged-in user.' });
         }
 
         await CharacterSkill.bulkCreate(listCharacterSkills, {
@@ -70,11 +70,11 @@ async function saveCharacterSkills(req, res) {
             classId: characterSubClass
         });
 
-        return res.json({ status: 200, msg: 'Atributos salvos.', character });
+        return res.json({ status: 200, msg: 'Attributes saved.', character });
 
     } catch (error) {
         console.error(error);
-        return res.status(500).send('Erro no servidor');
+        return res.status(500).send('Server error');
     }
 }
 

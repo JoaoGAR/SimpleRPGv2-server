@@ -21,7 +21,7 @@ Attribute.init({
         allowNull: false,
         validate: {
             notEmpty: {
-                msg: 'Nome obrigatório.',
+                msg: 'Name is required.',
             },
         },
     },

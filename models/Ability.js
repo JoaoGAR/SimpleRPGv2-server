@@ -12,7 +12,7 @@ const Ability = sequelize.define('Ability', {
         allowNull: false,
         validate: {
             notEmpty: {
-                msg: 'Nome obrigatório.',
+                msg: 'Name is required.',
             },
         },
     },

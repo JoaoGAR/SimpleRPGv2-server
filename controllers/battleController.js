@@ -96,7 +96,7 @@ async function challengeTarget(req, res) {
         res.send({ battleStatus, winner, createdItems, experience, gold, character, attackerInitiative, targetInitiative });
     } catch (error) {
         console.error(error.message);
-        res.status(500).send('Erro no servidor');
+        res.status(500).send('Server error');
     }
 }
 

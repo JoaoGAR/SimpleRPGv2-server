@@ -15,7 +15,7 @@ class UserController {
             const { name, email, password } = req.body;
             let user = await User.findOne({ where: { email } });
             if (user) {
-                return res.status(400).json({ msg: 'E-mail já cadastrado.' });
+                return res.status(400).json({ msg: 'Email is already registered.' });
             }
 
             const salt = await bcrypt.genSalt(10);
@@ -44,7 +44,7 @@ class UserController {
             );
         } catch (error) {
             console.error(error.message);
-            res.status(500).send('Erro no servidor');
+            res.status(500).send('Server error');
         }
     }
 
@@ -53,12 +53,12 @@ class UserController {
             const { email, password } = req.body;
             let user = await this.userDAO.getUser(null, email);
             if (!user) {
-                return res.status(400).json({ msg: 'Credenciais inválidas' });
+                return res.status(400).json({ msg: 'Invalid credentials' });
             }
 
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
-                return res.status(400).json({ msg: 'Credenciais inválidas' });
+                return res.status(400).json({ msg: 'Invalid credentials' });
             }
 
             const character = await getCharacterByUser(user.id);
@@ -80,7 +80,7 @@ class UserController {
             );
         } catch (error) {
             console.error(error.message);
-            res.status(500).send('Erro no servidor');
+            res.status(500).send('Server error');
         }
     }
 
@@ -92,7 +92,7 @@ class UserController {
             res.json({ user, character });
         } catch (error) {
             console.error(error.message);
-            res.status(500).send('Erro no servidor');
+            res.status(500).send('Server error');
         }
     }
 }

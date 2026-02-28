@@ -44,11 +44,11 @@ Character.init({
         type: DataTypes.STRING,
         allowNull: false,
         unique: {
-            msg: 'Já existe um personagem com este nome.',
+            msg: 'A character with this name already exists.',
         },
         validate: {
             notEmpty: {
-                msg: 'Nome obrigatório.',
+                msg: 'Name is required.',
             },
         },
     },

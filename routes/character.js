@@ -15,7 +15,7 @@ router.post('/register', authMiddleware, async (req, res) => {
     try {
         let character = await Character.findOne({ where: { name } });
         if (character) {
-            return res.status(400).json({ msg: 'Já existe um personagem com este nome.' });
+            return res.status(400).json({ msg: 'A character with this name already exists.' });
         }
 
         character = await Character.create({
@@ -28,7 +28,7 @@ router.post('/register', authMiddleware, async (req, res) => {
 
     } catch (error) {
         console.error(error.message);
-        res.status(500).send('Erro no servidor');
+        res.status(500).send('Server error');
     }
 });
 
@@ -39,7 +39,7 @@ router.get('/races/get', authMiddleware, async (req, res) => {
         res.send(races);
     } catch (error) {
         console.error(error.message);
-        res.status(500).send('Erro no servidor');
+        res.status(500).send('Server error');
     }
 });
 

@@ -7,7 +7,7 @@ async function getNPCs(req, res) {
         res.send(npcs);
     } catch (error) {
         console.error(error.message);
-        res.status(500).send('Erro no servidor');
+        res.status(500).send('Server error');
     }
 }
 

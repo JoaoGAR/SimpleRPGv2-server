@@ -12,7 +12,7 @@ const Category = sequelize.define('Category', {
         allowNull: false,
         validate: {
             notEmpty: {
-                msg: 'Nome obrigatório.',
+                msg: 'Name is required.',
             },
         },
     },
