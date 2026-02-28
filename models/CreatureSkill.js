@@ -1,59 +1,51 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/db');
 
-const Inventory = sequelize.define('Inventory', {
+const CreatureSkill = sequelize.define('CreatureSkill', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
     },
-    itemId: {
+    skillId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Items',
+            model: 'Skills',
             key: 'id',
         },
     },
-    characterId: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-            model: 'Characters',
-            key: 'id',
-        },
-    },
-
     creatureId: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
             model: 'Creatures',
             key: 'id',
         },
     },
-    equipped: {
+    level: {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 0,
     },
 }, {
     timestamps: true,
+    uniqueKeys: {
+        uniqueCreatureSkill: {
+            fields: ['creatureId', 'skillId'],
+        },
+    },
 });
 
-Inventory.associate = (models) => {
-    Inventory.belongsTo(models.Character, {
-        foreignKey: 'characterId',
-        as: 'character',
-    });
-    Inventory.belongsTo(models.Creature, {
+CreatureSkill.associate = (models) => {
+    CreatureSkill.belongsTo(models.Creature, {
         foreignKey: 'creatureId',
         as: 'creature',
     });
-    Inventory.belongsTo(models.Item, {
-        foreignKey: 'itemId',
-        as: 'item',
+    CreatureSkill.belongsTo(models.Skill, {
+        foreignKey: 'skillId',
+        as: 'skill',
     });
 };
 
-module.exports = Inventory;
+module.exports = CreatureSkill;
