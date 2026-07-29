@@ -295,8 +295,6 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.bulkDelete('Classes', {
-            id: { [Sequelize.Op.in]: [20, 21, 22] }
-        }, {});
+        await queryInterface.bulkDelete('Classes', null, {});
     }
 };

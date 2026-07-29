@@ -767,51 +767,6 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.bulkDelete('Abilities', {
-            name: [
-                'Cleave',
-                'Heavy Strike',
-                'Sweeping Slash',
-                'Crushing Blow',
-                'Titanbreaker',
-                'Immolate',
-                'Acid Spray',
-                'Thunderwave',
-                'Chain Lightning',
-                'Meteor Swarm',
-                'Heavy shot',
-                'Explosive shot',
-                'Piercing Volley',
-                'Sniper Mark',
-                'Rain of Arrows',
-                'Vicious Mockery',
-                'Dissonant Whispers',
-                'Mind Spike',
-                'Synaptic Pulse',
-                'Word of Ruin',
-                'Guiding Bolt',
-                'Sacred Flame',
-                'Spirit Lance',
-                'Divine Wrath',
-                'Judgement Nova',
-                'Shadow Bolt',
-                'Necrotic Touch',
-                'Soul Rend',
-                'Blight',
-                'Abyssal Cataclysm',
-                'Cure Wounds',
-                'Prayer of Healing',
-                'Mass Heal',
-                'Bless',
-                'Haste',
-                'Holy Aura',
-                'Bane',
-                'Hold Person',
-                'Bestow Curse',
-                'Mage Armor',
-                'Misty Step',
-                'Greater Invisibility'
-            ]
-        });
+        await queryInterface.bulkDelete('Abilities', null, {});
     }
 };
