@@ -93,6 +93,11 @@ const Ability = sequelize.define('Ability', {
         allowNull: false,
         defaultValue: true,
     },
+    savingThrowValue: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null,
+    },
     savingThrowSkillId: {
         type: DataTypes.INTEGER,
         allowNull: true,

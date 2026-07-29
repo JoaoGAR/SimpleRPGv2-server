@@ -4,7 +4,9 @@ module.exports = {
     async up(queryInterface, Sequelize) {
         const now = new Date();
 
-        const abilities = [
+        const getSavingThrowValue = (tierId) => 8 + (tierId * 2);
+
+        const abilityTemplates = [
             {
                 name: 'Cleave',
                 description: 'Basic strength cleave attack.',
@@ -762,6 +764,11 @@ module.exports = {
                 savingThrowSkillId: null
             }
         ];
+
+        const abilities = abilityTemplates.map((ability) => ({
+            ...ability,
+            savingThrowValue: ability.requiresSaving_throw ? getSavingThrowValue(ability.tierId) : null,
+        }));
 
         await queryInterface.bulkInsert('Abilities', abilities);
     },
