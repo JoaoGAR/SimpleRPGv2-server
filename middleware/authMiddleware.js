@@ -11,9 +11,16 @@ module.exports = function (req, res, next) {
     }
 
     try {
-        const actualToken = token.startsWith('Bearer ') ? token.slice(7, token.length).trimLeft() : token;
+        if (!token.startsWith('Bearer ')) {
+            return res.status(401).json({ msg: 'Invalid token' });
+        }
+        const actualToken = token.slice(7).trim();
+        if (!actualToken) return res.status(401).json({ msg: 'Invalid token' });
 
-        const decoded = jwt.verify(actualToken, process.env.JWT_SECRET);
+        const decoded = jwt.verify(actualToken, process.env.JWT_SECRET, { algorithms: ['HS256'] });
+        if (!decoded?.user?.id || !Number.isSafeInteger(decoded.user.id)) {
+            return res.status(401).json({ msg: 'Invalid token' });
+        }
         req.user = decoded.user;
         next();
     } catch (error) {

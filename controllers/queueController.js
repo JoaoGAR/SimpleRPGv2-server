@@ -33,7 +33,9 @@ async function getQueue(req, res) {
                 ['id', 'ASC'],
             ],
         });
-        queue.forEach(async function callback(value, index) {
+        for (let index = 0; index < queue.length; index++) {
+            const value = queue[index];
+            if (value.jobStatus === 3) continue;
 
             if (value.jobStatus === 2 && value.jobId === 1) {
                 const coordsx = value.coordsx;
@@ -58,7 +60,7 @@ async function getQueue(req, res) {
                 { where: { id: value.id } },
             );
 
-        });
+        }
         res.send(queue);
     } catch (error) {
         console.error(error.message);

@@ -9,13 +9,18 @@ const { generateItem } = require('../controllers/itemController');
 const BaseItem = require('../models/BaseItem');
 const Character = require('../models/Character');
 const Inventory = require('../models/Inventory');
+const { positiveInteger, badRequest } = require('../utils/requestValidation');
 
 async function challengeTarget(req, res) {
     try {
-        const { targetId } = req.body;
+        const targetId = positiveInteger(req.body.targetId);
+        if (!targetId) return badRequest(res, 'Invalid target.');
         const userId = req.user.id;
         let attacker = await getCharacterByUser(userId, null);
         let target = await getCharacterByUser(null, targetId);
+        if (!attacker || !target || attacker.id === target.id) return res.status(404).json({ msg: 'Target not found.' });
+        if (!target.isNPC) return res.status(400).json({ msg: 'Only NPC targets can be challenged.' });
+        if (!attacker.inventory?.length || !target.inventory?.length) return res.status(400).json({ msg: 'Both combatants must have equipment.' });
 
         attacker = await equipmentBonus(attacker, attacker.inventory);
         target = await equipmentBonus(target, target.inventory);

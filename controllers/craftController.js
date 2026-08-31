@@ -1,7 +1,13 @@
 const { rerollItemAbilities, rerollItemBaseTier } = require('../services/itemService');
+const Inventory = require('../models/Inventory');
+const { positiveInteger, badRequest } = require('../utils/requestValidation');
 
-async function handleReroll(res, action, successMessage) {
-    const item = await action();
+async function handleReroll(req, res, action, successMessage) {
+    const itemId = positiveInteger(req.body.itemId);
+    if (!itemId) return badRequest(res, 'Invalid item.');
+    const owned = await Inventory.findOne({ where: { itemId, characterId: req.character.id } });
+    if (!owned) return res.status(404).json({ status: 404, msg: 'Item not found.' });
+    const item = await action(itemId);
 
     if (!item) {
         return res.json({ status: 404, msg: 'Item not found.' });
@@ -12,8 +18,7 @@ async function handleReroll(res, action, successMessage) {
 
 async function rerollAbilities(req, res) {
     try {
-        const { itemId } = req.body;
-        return await handleReroll(res, () => rerollItemAbilities(itemId), 'Item abilities rerolled.');
+        return await handleReroll(req, res, rerollItemAbilities, 'Item abilities rerolled.');
     } catch (error) {
         console.error(error.message);
         return res.status(500).send('Server error');
@@ -22,8 +27,7 @@ async function rerollAbilities(req, res) {
 
 async function rerollBaseTier(req, res) {
     try {
-        const { itemId } = req.body;
-        return await handleReroll(res, () => rerollItemBaseTier(itemId), 'Item base tier rerolled.');
+        return await handleReroll(req, res, rerollItemBaseTier, 'Item base tier rerolled.');
     } catch (error) {
         console.error(error.message);
         return res.status(500).send('Server error');

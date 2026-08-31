@@ -21,6 +21,7 @@ const Reward = require('../models/Reward');
 const Job = require('../models/Job');
 const Character = require('../models/Character');
 const WorkQueue = require('../models/WorkQueue');
+const { positiveInteger, badRequest } = require('../utils/requestValidation');
 
 Requirement.associate({ Skill });
 Reward.associate({ Job, BaseItem });
@@ -68,11 +69,18 @@ async function getJobs(req, res) {
 }
 
 async function startWork(req, res) {
-    const { duration, jobId, jobStatus, coordsx, coordsy } = req.body;
+    const jobId = positiveInteger(req.body.jobId);
+    const duration = Number(req.body.duration);
     const userId = req.user.id;
     const now = dayjs();
 
     try {
+        if (!jobId || !Number.isInteger(duration) || duration < 0 || duration > 2) return badRequest(res, 'Invalid job request.');
+        const jobLocation = await JobLocation.findOne({ where: { jobId } });
+        if (!jobLocation) return res.status(404).json({ msg: 'Job not found.' });
+        const coordsx = Number(jobLocation.coordsx);
+        const coordsy = Number(jobLocation.coordsy);
+        if (!Number.isFinite(coordsx) || !Number.isFinite(coordsy)) throw new Error('Invalid job location coordinates');
         let { finalDuration, durationTime } = await calculateDuration(duration);
         durationTime = jobId === 1 ? 0 : durationTime;
         let character = await Character.findOne({ where: { userId } });
@@ -100,7 +108,7 @@ async function startWork(req, res) {
                     endAt: now.add(travelTime, 'hour'),
                     jobId: 1,
                     characterId: character.id,
-                    jobStatus,
+                    jobStatus: 0,
                     relatedJobId: jobId,
                     coordsx: coordsx,
                     coordsy: coordsy,
@@ -114,7 +122,7 @@ async function startWork(req, res) {
             endAt,
             jobId,
             characterId: character.id,
-            jobStatus,
+            jobStatus: 0,
             coordsx: coordsx,
             coordsy: coordsy,
         });
@@ -127,10 +135,11 @@ async function startWork(req, res) {
 }
 
 async function finishWork(req, res) {
-    const { queueId } = req.body;
+    const queueId = positiveInteger(req.body.queueId);
     const userId = req.user.id;
 
     try {
+        if (!queueId) return badRequest(res, 'Invalid queue item.');
         let character = await Character.findOne({ where: { userId }, include: [{ model: CharacterSkill, as: 'skills' }] });
 
         const queue = await WorkQueue.findOne({
@@ -150,13 +159,15 @@ async function finishWork(req, res) {
             }],
         });
 
+        if (!queue) return res.send({ status: 401, message: getResponseMessage('queueNotFound') });
+        const [claimed] = await WorkQueue.update({ jobStatus: 3 }, { where: { id: queue.id, characterId: character.id, jobStatus: 2 } });
+        if (!claimed) return res.status(409).json({ status: 409, message: 'This work item is already being processed.' });
+        queue.jobStatus = 3;
         const travelling = await WorkQueue.findOne({
             where: { jobId: 1, characterId: character.id, jobStatus: 2, relatedJobId: queue.jobId },
         });
 
-        if (!queue) return res.send({ status: 401, message: getResponseMessage('queueNotFound') });
-
-        jobResult = await completeJob(character, queue);
+        const jobResult = await completeJob(character, queue);
 
         let travellingId = null;
         if (travelling) {
@@ -164,7 +175,7 @@ async function finishWork(req, res) {
             travellingId = travelling.id;
         };
 
-        //await queue.destroy();
+        await queue.destroy();
         character = await getCharacterByUser(userId);
         res.send({ jobResult, 'status': 200, 'message': getResponseMessage('workCompleted'), 'travellingId': travellingId, 'character': character });
 
@@ -175,17 +186,17 @@ async function finishWork(req, res) {
 }
 
 async function dismissWork(req, res) {
-    const { queueId } = req.body;
+    const queueId = positiveInteger(req.body.queueId);
     const userId = req.user.id;
 
     try {
+        if (!queueId) return badRequest(res, 'Invalid queue item.');
         const character = await Character.findOne({ where: { userId } });
         const queue = await WorkQueue.findOne({ where: { id: queueId, characterId: character.id } });
+        if (!queue) return res.send({ status: 401, message: getResponseMessage('queueNotFound') });
         const travelling = await WorkQueue.findOne({
             where: { jobId: 1, characterId: character.id, relatedJobId: queue.jobId },
         });
-
-        if (!queue) return res.send({ status: 401, message: getResponseMessage('queueNotFound') });
 
         let travellingId = null;
         if (travelling) {
