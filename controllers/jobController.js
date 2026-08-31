@@ -1,245 +1,67 @@
-const { Op } = require('sequelize');
-const dayjs = require('dayjs');
-const { distanceCalculator, timeCalculator } = require('../utils/distanceUtils');
-const { rewardCalculator } = require('../utils/rewardUtils');
-const { levelCalculator } = require('../utils/levelUtils');
-const { equipmentBonus } = require('../utils/equipmentBonus');
 const { getResponseMessage } = require('../utils/responseMessages');
-const { calculateDuration } = require('../utils/timeUtils');
-
-const { generateItem } = require('../controllers/itemController');
-const { getCharacterByUser } = require('../DAOs/CharacterDAO');
-
-const JobLocation = require('../models/JobLocation');
-const CharacterSkill = require('../models/CharacterSkill');
-const Attribute = require('../models/Attribute');
-const Inventory = require('../models/Inventory');
-const BaseItem = require('../models/BaseItem');
-const Skill = require('../models/Skill');
-const Requirement = require('../models/Requirement');
-const Reward = require('../models/Reward');
-const Job = require('../models/Job');
-const Character = require('../models/Character');
-const WorkQueue = require('../models/WorkQueue');
 const { positiveInteger, badRequest } = require('../utils/requestValidation');
+const {
+    JobError,
+    dismissWork: dismissWorkService,
+    finishWork: finishWorkService,
+    getJobs: getJobsService,
+    startWork: startWorkService,
+} = require('../services/jobService');
 
-Requirement.associate({ Skill });
-Reward.associate({ Job, BaseItem });
-Job.associate({ Attribute, Requirement, Reward, JobLocation });
-JobLocation.associate({ Job });
-WorkQueue.associate({ Job, Character });
+function handleJobError(res, error) {
+    if (error instanceof JobError) {
+        return res.status(error.status).json({ status: error.status, msg: error.message });
+    }
+
+    console.error('Unable to process job:', error);
+    return res.status(500).send(getResponseMessage('serverError'));
+}
 
 async function getJobs(req, res) {
     try {
-        const userId = req.user.id;
-        let character = await getCharacterByUser(userId);
-        const equipment = character.inventory;
-
-        const jobsLocations = await JobLocation.findAll({
-            include: [{
-                model: Job, as: 'job', include: [
-                    { model: Attribute, as: 'attribute' },
-                    { model: Reward, as: 'rewards', include: [{ model: BaseItem, as: 'item' }] },
-                    {
-                        model: Requirement, as: 'requirements',
-                        include: [{ model: Skill, as: 'skill', include: [{ model: Attribute, as: 'attribute' }] }]
-                    },
-                ]
-            }],
-            order: [[{ model: Job, as: 'job' }, { model: Reward, as: 'rewards' }, 'baseItemId', 'ASC']],
-        });
-
-        character = await equipmentBonus(character, equipment);
-
-        const availableJobs = jobsLocations.filter(jobLocation =>
-            (jobLocation.job?.requirements ?? []).every(requirement => {
-                const characterSkill =
-                    character.skills?.find(cs => cs.skillId === requirement.skillId);
-
-                const level = characterSkill?.level ?? 0;
-
-                return (level + 2) >= requirement.skillLevel;
-            })
-        );
-        res.send(availableJobs);
+        return res.send(await getJobsService(req.user.id));
     } catch (error) {
-        console.error(error.message);
-        res.status(500).send(getResponseMessage('serverError'));
+        return handleJobError(res, error);
     }
 }
 
 async function startWork(req, res) {
     const jobId = positiveInteger(req.body.jobId);
     const duration = Number(req.body.duration);
-    const userId = req.user.id;
-    const now = dayjs();
+    if (!jobId || !Number.isInteger(duration) || duration < 0 || duration > 2) {
+        return badRequest(res, 'Invalid job request.');
+    }
 
     try {
-        if (!jobId || !Number.isInteger(duration) || duration < 0 || duration > 2) return badRequest(res, 'Invalid job request.');
-        const jobLocation = await JobLocation.findOne({ where: { jobId } });
-        if (!jobLocation) return res.status(404).json({ msg: 'Job not found.' });
-        const coordsx = Number(jobLocation.coordsx);
-        const coordsy = Number(jobLocation.coordsy);
-        if (!Number.isFinite(coordsx) || !Number.isFinite(coordsy)) throw new Error('Invalid job location coordinates');
-        let { finalDuration, durationTime } = await calculateDuration(duration);
-        durationTime = jobId === 1 ? 0 : durationTime;
-        let character = await Character.findOne({ where: { userId } });
-
-        const queue = await WorkQueue.findAll({ where: { characterId: character.id, jobId: { [Op.ne]: 1 } } });
-        if (queue.length >= 4 && jobId !== 1) return res.json({ status: 401, msg: getResponseMessage('queueFull') });
-
-        if (queue.length > 0) {
-            character.coordsx = queue[queue.length - 1].coordsx;
-            character.coordsy = queue[queue.length - 1].coordsy;
-        }
-
-        const distance = await distanceCalculator(character.coordsx, character.coordsy, coordsx, coordsy);
-        const travelTime = await timeCalculator(distance, character.movementSpeed) / 60;
-        let endAt = now.add(durationTime + travelTime, 'hour');
-
-        if (queue.length > 0 && queue[queue.length - 1].jobStatus != 2) {
-            endAt = dayjs(queue[queue.length - 1].endAt).add(durationTime + travelTime, 'hour');
-        }
-
-        if (distance > 0) {
-            if (jobId !== 1) {
-                await WorkQueue.create({
-                    duration: 0,
-                    endAt: now.add(travelTime, 'hour'),
-                    jobId: 1,
-                    characterId: character.id,
-                    jobStatus: 0,
-                    relatedJobId: jobId,
-                    coordsx: coordsx,
-                    coordsy: coordsy,
-                });
-            }
-            //await character.update({ coordsx, coordsy });
-        }
-
-        const newQueue = await WorkQueue.create({
-            duration: finalDuration,
-            endAt,
-            jobId,
-            characterId: character.id,
-            jobStatus: 0,
-            coordsx: coordsx,
-            coordsy: coordsy,
-        });
-
-        res.json({ status: 200, msg: getResponseMessage('workQueued'), queue: newQueue });
+        const queue = await startWorkService(req.user.id, jobId, duration);
+        return res.json({ status: 200, msg: getResponseMessage('workQueued'), queue });
     } catch (error) {
-        console.error(error.message);
-        res.status(500).send(getResponseMessage('serverError'));
+        return handleJobError(res, error);
     }
 }
 
 async function finishWork(req, res) {
     const queueId = positiveInteger(req.body.queueId);
-    const userId = req.user.id;
+    if (!queueId) return badRequest(res, 'Invalid queue item.');
 
     try {
-        if (!queueId) return badRequest(res, 'Invalid queue item.');
-        let character = await Character.findOne({ where: { userId }, include: [{ model: CharacterSkill, as: 'skills' }] });
-
-        const queue = await WorkQueue.findOne({
-            where: { id: queueId, characterId: character.id, jobStatus: 2 },
-            include: [{
-                model: Job, as: 'job',
-                include: [
-                    {
-                        model: Reward, as: 'rewards',
-                        include: [{ model: BaseItem, as: 'item' }]
-                    },
-                    {
-                        model: Requirement, as: 'requirements',
-                        include: [{ model: Skill, as: 'skill', include: [{ model: Attribute, as: 'attribute' }] }]
-                    },
-                ]
-            }],
-        });
-
-        if (!queue) return res.send({ status: 401, message: getResponseMessage('queueNotFound') });
-        const [claimed] = await WorkQueue.update({ jobStatus: 3 }, { where: { id: queue.id, characterId: character.id, jobStatus: 2 } });
-        if (!claimed) return res.status(409).json({ status: 409, message: 'This work item is already being processed.' });
-        queue.jobStatus = 3;
-        const travelling = await WorkQueue.findOne({
-            where: { jobId: 1, characterId: character.id, jobStatus: 2, relatedJobId: queue.jobId },
-        });
-
-        const jobResult = await completeJob(character, queue);
-
-        let travellingId = null;
-        if (travelling) {
-            await travelling.destroy();
-            travellingId = travelling.id;
-        };
-
-        await queue.destroy();
-        character = await getCharacterByUser(userId);
-        res.send({ jobResult, 'status': 200, 'message': getResponseMessage('workCompleted'), 'travellingId': travellingId, 'character': character });
-
+        const { jobResult, travellingId, character } = await finishWorkService(req.user.id, queueId);
+        return res.send({ jobResult, status: 200, message: getResponseMessage('workCompleted'), travellingId, character });
     } catch (error) {
-        console.error(error.message);
-        res.status(500).send(getResponseMessage('serverError'));
+        return handleJobError(res, error);
     }
 }
 
 async function dismissWork(req, res) {
     const queueId = positiveInteger(req.body.queueId);
-    const userId = req.user.id;
+    if (!queueId) return badRequest(res, 'Invalid queue item.');
 
     try {
-        if (!queueId) return badRequest(res, 'Invalid queue item.');
-        const character = await Character.findOne({ where: { userId } });
-        const queue = await WorkQueue.findOne({ where: { id: queueId, characterId: character.id } });
-        if (!queue) return res.send({ status: 401, message: getResponseMessage('queueNotFound') });
-        const travelling = await WorkQueue.findOne({
-            where: { jobId: 1, characterId: character.id, relatedJobId: queue.jobId },
-        });
-
-        let travellingId = null;
-        if (travelling) {
-            await travelling.destroy();
-            travellingId = travelling.id;
-        };
-        await queue.destroy();
-
-        res.send({ status: 200, message: getResponseMessage('workDismissed'), travellingId: travellingId });
+        const { travellingId } = await dismissWorkService(req.user.id, queueId);
+        return res.send({ status: 200, message: getResponseMessage('workDismissed'), travellingId });
     } catch (error) {
-        console.error(error.message);
-        res.status(500).send(getResponseMessage('serverError'));
+        return handleJobError(res, error);
     }
-}
-
-async function completeJob(character, queue) {
-    let jobResult = await rewardCalculator(character, queue);
-    const levelCalc = await levelCalculator(character, jobResult.experience);
-
-    await character.update({
-        experience: levelCalc.totalExp,
-        level: levelCalc.level,
-        gold: character.gold + jobResult.gold
-    });
-
-    if (levelCalc.levelled) {
-        await character.update({
-            classPoints: character.classPoints + levelCalc.classPoints,
-            skillPoints: character.skillPoints + levelCalc.skillPoints
-        });
-    }
-
-    const createdItems = [];
-    for (const reward of jobResult.rewards) {
-        const newItem = await generateItem(reward.item);
-        if (newItem) {
-            createdItems.push(newItem);
-            await Inventory.create({ itemId: newItem.id, characterId: character.id });
-        }
-    }
-    jobResult.rewards = createdItems;
-
-    return jobResult;
 }
 
 module.exports = { getJobs, startWork, finishWork, dismissWork };
