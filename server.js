@@ -9,8 +9,9 @@ const app = express();
 
 connectDB();
 
-app.use(express.json());
-app.use(cors());
+app.disable('x-powered-by');
+app.use(express.json({ limit: '100kb' }));
+app.use(cors({ origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : false, methods: ['GET', 'POST'], allowedHeaders: ['Authorization', 'Content-Type'] }));
 
 app.use('/api/auth', require('./routes/auth'));
 

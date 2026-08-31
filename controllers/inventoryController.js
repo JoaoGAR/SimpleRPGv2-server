@@ -5,6 +5,7 @@ const { getInventoryByCharacter } = require('../DAOs/InventoryDAO');
 const Item = require('../models/Item');
 const Character = require('../models/Character');
 const Inventory = require('../models/Inventory');
+const { positiveInteger, badRequest } = require('../utils/requestValidation');
 
 async function getInventory(req, res) {
     try {
@@ -22,7 +23,8 @@ async function getInventory(req, res) {
 async function equipItem(req, res) {
     try {
         const userId = req.user.id;
-        const { inventoryId, equipped } = req.body;
+        const inventoryId = positiveInteger(req.body.inventoryId);
+        if (!inventoryId) return badRequest(res, 'Invalid equipment request.');
 
         let character = await Character.findOne({ where: { userId } });
         const characterId = character.id;
@@ -51,18 +53,16 @@ async function equipItem(req, res) {
             ],
         });
 
+        const equipped = !Boolean(inventory.equipped);
         let newArmorClass = character.armorClass;
-        //prevEquipment = prevEquipment ? prevEquipment : inventory;
-
-        if (prevEquipment) {
-            newArmorClass = (character.armorClass - prevEquipment.item.armorClass) + inventory.item.armorClass;
+        if (equipped) {
+            newArmorClass = (character.armorClass - (prevEquipment?.item.armorClass || 0)) + inventory.item.armorClass;
+            if (prevEquipment) await prevEquipment.update({ equipped: 0 });
+            await inventory.update({ equipped: 1 });
         } else {
-            prevEquipment = inventory;
-            newArmorClass = character.armorClass + inventory.item.armorClass;
+            newArmorClass = Math.max(0, character.armorClass - inventory.item.armorClass);
+            await inventory.update({ equipped: 0 });
         }
-
-        await prevEquipment.update({ equipped: 0 });
-        await inventory.update({ equipped: !equipped });
         await character.update({ armorClass: newArmorClass });
 
         character = await getCharacterByUser(userId);

@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const { getCharacterByUser } = require('../DAOs/CharacterDAO');
 const UserDAO = require('../DAOs/UserDAO');
 const User = require('../models/User');
+const { sanitizeUser } = require('../utils/sanitizeUser');
 
 class UserController {
     constructor() {
@@ -13,6 +14,9 @@ class UserController {
     async register(req, res) {
         try {
             const { name, email, password } = req.body;
+            if (typeof name !== 'string' || !name.trim() || typeof email !== 'string' || typeof password !== 'string' || password.length < 8) {
+                return res.status(400).json({ msg: 'Provide a name, valid email, and password of at least 8 characters.' });
+            }
             let user = await User.findOne({ where: { email } });
             if (user) {
                 return res.status(400).json({ msg: 'Email is already registered.' });
@@ -39,7 +43,7 @@ class UserController {
                 { expiresIn: '4h' },
                 (err, token) => {
                     if (err) throw err;
-                    res.json({ token, user });
+                    res.status(201).json({ token, user: sanitizeUser(user) });
                 }
             );
         } catch (error) {
@@ -75,7 +79,7 @@ class UserController {
                 { expiresIn: '4h' },
                 (err, token) => {
                     if (err) throw err;
-                    res.json({ token, user, character });
+                    res.json({ token, user: sanitizeUser(user), character });
                 }
             );
         } catch (error) {
@@ -89,7 +93,7 @@ class UserController {
             const user = await this.userDAO.getUser(req.user.id, null);
             const character = await getCharacterByUser(user.id);
 
-            res.json({ user, character });
+            res.json({ user: sanitizeUser(user), character });
         } catch (error) {
             console.error(error.message);
             res.status(500).send('Server error');
