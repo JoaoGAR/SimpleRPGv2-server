@@ -11,7 +11,12 @@ connectDB();
 
 app.disable('x-powered-by');
 app.use(express.json({ limit: '100kb' }));
-app.use(cors({ origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : false, methods: ['GET', 'POST'], allowedHeaders: ['Authorization', 'Content-Type'] }));
+const corsOrigin = process.env.CORS_ORIGIN?.split(',').map(origin => origin.trim()).filter(Boolean);
+
+// Keep the previous permissive behavior unless an allowlist is explicitly configured.
+app.use(cors(corsOrigin?.length
+    ? { origin: corsOrigin, methods: ['GET', 'POST'], allowedHeaders: ['Authorization', 'Content-Type'] }
+    : undefined));
 
 app.use('/api/auth', require('./routes/auth'));
 
