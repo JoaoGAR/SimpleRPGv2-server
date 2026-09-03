@@ -35,6 +35,7 @@ async function getQueue(req, res) {
         });
         for (let index = 0; index < queue.length; index++) {
             const value = queue[index];
+            const currentStatus = value.jobStatus;
             if (value.jobStatus === 3) continue;
 
             if (value.jobStatus === 2 && value.jobId === 1) {
@@ -57,7 +58,8 @@ async function getQueue(req, res) {
             }
             await WorkQueue.update(
                 { jobStatus: value.jobStatus },
-                { where: { id: value.id } },
+                // Do not overwrite a work item that finishWork claimed after this queue was read.
+                { where: { id: value.id, characterId, jobStatus: currentStatus } },
             );
 
         }
