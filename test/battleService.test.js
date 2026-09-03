@@ -1,7 +1,13 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const { findWeapon, getSkillModifier, rollAttack } = require('../services/battleService');
+const Character = require('../models/Character');
+const {
+    findWeapon,
+    getSkillModifier,
+    rollAttack,
+    updateAttackerWellness,
+} = require('../services/battleService');
 
 test('findWeapon selects only the equipped main-hand item', () => {
     const weapon = { categoryId: 1, attack: '1d6' };
@@ -24,4 +30,18 @@ test('rollAttack returns a complete combat result', async () => {
     assert.ok(result.d20 >= 1 && result.d20 <= 20);
     assert.ok(result.damage >= 3);
     assert.equal(result.critical, result.d20 === 20 ? 2 : 1);
+});
+
+test('updateAttackerWellness persists only the player wellness', async () => {
+    const originalUpdate = Character.update;
+    const updates = [];
+    Character.update = async (...args) => updates.push(args);
+
+    try {
+        await updateAttackerWellness({ id: 12, wellness: 7 });
+    } finally {
+        Character.update = originalUpdate;
+    }
+
+    assert.deepEqual(updates, [[{ wellness: 7 }, { where: { id: 12 } }]]);
 });
