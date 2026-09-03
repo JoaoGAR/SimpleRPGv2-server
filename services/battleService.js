@@ -40,7 +40,9 @@ async function challengeTarget(userId, targetId) {
         : [target, attacker];
     const battleStatus = await resolveBattle(first, second);
 
-    await updateCombatantWellness(attacker, target);
+    // NPCs are encounter templates and do not have a recovery lifecycle. Persisting
+    // their battle damage would make a defeated NPC permanently unrecoverable.
+    await updateAttackerWellness(attacker);
 
     const winner = attacker.wellness > 0 ? 1 : 0;
     const rewards = winner ? await grantRewards(attacker, target) : emptyRewards();
@@ -135,9 +137,8 @@ async function rollAttack(weapon, ability, skillModifier, target) {
     return { status: hit ? 1 : 0, d20, skillModifier, critical, weaponDamage, abilityDamage, damage };
 }
 
-async function updateCombatantWellness(attacker, target) {
+async function updateAttackerWellness(attacker) {
     await Character.update({ wellness: attacker.wellness }, { where: { id: attacker.id } });
-    await Character.update({ wellness: target.wellness }, { where: { id: target.id } });
 }
 
 async function grantRewards(attacker, target) {
@@ -183,4 +184,5 @@ module.exports = {
     findWeapon,
     getSkillModifier,
     rollAttack,
+    updateAttackerWellness,
 };
