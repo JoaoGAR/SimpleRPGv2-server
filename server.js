@@ -3,6 +3,13 @@ const { connectDB } = require('./config/db');
 const dotenv = require('dotenv');
 const cors = require('cors');
 
+require('./DAOs/CharacterDAO');
+require('./DAOs/InventoryDAO');
+require('./DAOs/ItemDAO');
+require('./DAOs/NpcDAO');
+require('./DAOs/UserDAO');
+require('./controllers/jobController');
+
 dotenv.config();
 
 const app = express();

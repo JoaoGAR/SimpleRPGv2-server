@@ -8,6 +8,7 @@ const Category = require('../models/Category');
 const Tier = require('../models/Tier');
 const Inventory = require('../models/Inventory');
 const Class = require('../models/Class');
+const Status = require('../models/Status');
 const CharacterAttribute = require('../models/CharacterAttribute');
 const CharacterSkill = require('../models/CharacterSkill');
 const CreatureSkill = require('../models/CreatureSkill');
@@ -19,6 +20,7 @@ const WeaponAbility = require('../models/WeaponAbility');
 
 Attribute.associate({ Skill });
 Skill.associate({ Attribute });
+Status.associate({ Skill });
 CharacterAttribute.associate({ Character, Attribute });
 CharacterSkill.associate({ Character, Skill });
 CreatureSkill.associate({ Creature, Skill });

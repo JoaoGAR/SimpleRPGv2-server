@@ -5,6 +5,7 @@ const ItemSkill = require('../models/ItemSkill');
 const Skill = require('../models/Skill');
 const Ability = require('../models/Ability');
 const AbilityType = require('../models/AbilityType');
+const ActionType = require('../models/ActionType');
 const DamageType = require('../models/DamageType');
 const WeaponAbility = require('../models/WeaponAbility');
 const Category = require('../models/Category');
@@ -13,7 +14,7 @@ const Inventory = require('../models/Inventory');
 
 Item.associate({ Tier, Inventory, Category, ItemSkill, WeaponAbility, Skill });
 ItemSkill.associate({ Item, Skill });
-Ability.associate({ Tier, Skill, AbilityType, DamageType });
+Ability.associate({ Tier, Skill, AbilityType, ActionType, DamageType });
 WeaponAbility.associate({ Item, Ability });
 
 
@@ -30,7 +31,14 @@ async function getItem(id) {
             },
             {
                 model: WeaponAbility, as: 'abilities',
-                include: [{ model: Ability, as: 'ability', include: [{ model: Tier, as: 'tier' }] }]
+                include: [{
+                    model: Ability,
+                    as: 'ability',
+                    include: [
+                        { model: Tier, as: 'tier' },
+                        { model: ActionType, as: 'actionType' }
+                    ]
+                }]
             },
         ]
     });
@@ -53,7 +61,14 @@ async function getItems(items) {
             },
             {
                 model: WeaponAbility, as: 'abilities',
-                include: [{ model: Ability, as: 'ability', include: [{ model: Tier, as: 'tier' }] }]
+                include: [{
+                    model: Ability,
+                    as: 'ability',
+                    include: [
+                        { model: Tier, as: 'tier' },
+                        { model: ActionType, as: 'actionType' }
+                    ]
+                }]
             },
         ]
     });
